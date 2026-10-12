@@ -497,7 +497,10 @@
     {%- set esposa_preenchido = q1_acordo_ordenacao or q2_concorda_doutinas or q3_ministerio_voluntario or q4_nao_interferir or q5_outros or assinatura_esposa %}
     <div class="grid grid-2">
       {{ field("Nome do Ungido", nome if esposa_preenchido else None) }}
-      {{ field("Nome da Esposa", nome_esposa) }}
+      {# Só mostra o nome da esposa aqui quando a Função Atual (item 01,
+         em Vida Espiritual) for "Ungido" — nas demais funções o campo
+         fica em branco, mesmo que o nome já esteja preenchido lá. #}
+      {{ field("Nome da Esposa", nome_esposa if funcao_atual == "Ungido" else None) }}
     </div>
     <div class="grid" style="margin-top:7px;">
       {{ field("1) De acordo com a ordenação e o propósito do esposo?", q1_acordo_ordenacao, full=True) }}
