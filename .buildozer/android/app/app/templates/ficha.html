@@ -1,0 +1,537 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+<meta charset="utf-8">
+<style>
+  :root {
+    --navy: #03223f;
+    --navy-light: #0b3a63;
+    --red: #b41926;
+    --gold: #c89116;
+    --paper: #f7f5f0;
+    --ink: #1c2b3a;
+    --muted: #6b7585;
+    --border: #dde3ea;
+    --card: #ffffff;
+    --yes-bg: #e4f6ed; --yes-fg: #0d7a44;
+    --no-bg: #fdeaea;  --no-fg: #ad2a2a;
+    --empty-bg: #eef1f4; --empty-fg: #8993a3;
+  }
+
+  @page {
+    size: A4;
+    margin: 15mm 14mm 16mm 14mm;
+    @bottom-left {
+      content: "Igreja Cristã Maranata — Ficha de Obreiro";
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      font-size: 7.5px; color: #8993a3; letter-spacing: .2px;
+    }
+    @bottom-right {
+      content: "Página " counter(page) " de " counter(pages);
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      font-size: 7.5px; color: #8993a3;
+    }
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    color: var(--ink); font-size: 10.3px; line-height: 1.45;
+    background: #fff;
+  }
+
+  /* ── Capa / cabeçalho institucional ─────────────────────── */
+  .cover {
+    background: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 100%);
+    color: #fff; border-radius: 10px;
+    padding: 18px 22px; margin-bottom: 16px;
+    display: flex; align-items: center; justify-content: space-between; gap: 16px;
+  }
+  .cover .brand small {
+    display: block; text-transform: uppercase; letter-spacing: 2px;
+    font-size: 8px; color: #b9c7da; margin-bottom: 3px;
+  }
+  .cover .brand h1 { margin: 0; font-size: 18px; font-weight: 700; letter-spacing: .3px; }
+  .cover .brand .subtitle { margin-top: 4px; font-size: 10px; color: #cdd9e8; }
+  .cover .meta { text-align: right; flex-shrink: 0; }
+  .cover .badge {
+    display: inline-block; background: var(--red); color: #fff;
+    padding: 5px 14px; border-radius: 999px;
+    font-weight: 700; font-size: 11px; letter-spacing: .3px;
+  }
+  .cover .meta .date { margin-top: 6px; font-size: 8.5px; color: #cdd9e8; }
+
+  .identity {
+    display: flex; gap: 16px; align-items: stretch;
+    background: var(--card); border: 1px solid var(--border); border-radius: 10px;
+    padding: 14px; margin-bottom: 18px;
+  }
+  .photo-box {
+    width: 86px; height: 112px; flex-shrink: 0;
+    border: 2px solid var(--navy); border-radius: 6px;
+    background: var(--paper);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 8px; color: var(--muted); text-align: center; padding: 4px;
+    overflow: hidden;
+  }
+  .photo-box img { width: 100%; height: 100%; object-fit: cover; }
+  .identity-main { flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 6px; }
+  .identity-main .name { font-size: 16px; font-weight: 700; color: var(--navy); }
+  .identity-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+  .id-chip {
+    background: var(--paper); border: 1px solid var(--border); border-radius: 999px;
+    padding: 3px 10px; font-size: 8.5px; color: var(--ink);
+  }
+  .id-chip b { color: var(--red); font-weight: 700; margin-right: 3px; }
+
+  /* ── Seções ──────────────────────────────────────────────── */
+  section { margin-top: 12px; page-break-inside: avoid; }
+  section h2 {
+    background: var(--navy); color: #fff;
+    padding: 7px 12px; margin: 0;
+    font-size: 10.5px; letter-spacing: .6px; text-transform: uppercase; font-weight: 700;
+    border-radius: 7px 7px 0 0;
+    border-left: 4px solid var(--gold);
+  }
+  .section-body {
+    border: 1px solid var(--border); border-top: none; border-radius: 0 0 7px 7px;
+    padding: 12px; background: var(--card);
+  }
+
+  /* Flexbox em vez de CSS Grid: o WeasyPrint tem um bug real de
+     posicionamento ao misturar itens "span" (full) com grid-auto-flow,
+     que embaralha a ordem dos campos. E com flex-grow:1 o WeasyPrint
+     calcula o espaço errado e quebra 3 colunas em 2 — por isso
+     "flex: 0 0 X%" (sem crescer) em vez de "flex: 1 1 X%". */
+  .grid { display: flex; flex-wrap: wrap; gap: 7px 10px; }
+  .grid > .field { flex: 0 0 28%; min-width: 0; }
+  .grid-2 > .field { flex: 0 0 42%; }
+  .grid-4 > .field { flex: 0 0 19%; }
+  .full { flex-basis: 100% !important; }
+
+  .field {
+    background: var(--paper); border: 1px solid var(--border); border-radius: 5px;
+    padding: 5px 9px;
+  }
+  .field .k {
+    font-size: 7.8px; color: var(--red); text-transform: uppercase;
+    letter-spacing: .3px; font-weight: 700; margin-bottom: 2px;
+  }
+  .field .v {
+    font-size: 10px; color: var(--ink); word-break: break-word; min-height: 12px;
+  }
+  .field .v.muted { color: #b3bac4; }
+  .field .v .detail { display: block; margin-top: 3px; font-size: 9.3px; color: var(--muted); font-weight: 400; }
+
+  .sub-section {
+    color: var(--red); font-size: 9.5px; margin: 12px 0 6px 0;
+    text-transform: uppercase; font-weight: 700; letter-spacing: .4px;
+    padding-bottom: 3px; border-bottom: 1.5px solid #f0d9db;
+  }
+  .sub-section:first-child { margin-top: 0; }
+
+  .check {
+    display: inline-block; padding: 2px 8px; border-radius: 999px;
+    font-size: 8.8px; font-weight: 700;
+  }
+  .check-yes   { background: var(--yes-bg);   color: var(--yes-fg); }
+  .check-no    { background: var(--no-bg);    color: var(--no-fg); }
+  .check-empty { background: var(--empty-bg); color: var(--empty-fg); font-weight: 600; }
+
+  .textarea-v {
+    white-space: pre-wrap; min-height: 46px;
+    background: var(--paper); border: 1px solid var(--border); border-radius: 5px;
+    padding: 7px 9px; font-size: 9.8px;
+  }
+
+  .dons-grid, .maanaim-grid {
+    display: flex; flex-wrap: wrap; gap: 5px; margin-top: 4px;
+  }
+  .dons-grid .don-chip { flex: 0 0 13.5%; }
+  .maanaim-grid .don-chip { flex: 0 0 28%; }
+  .don-chip {
+    background: var(--paper); border: 1px solid var(--border); border-radius: 999px;
+    padding: 5px 4px; text-align: center; font-size: 8px; font-weight: 600; color: var(--muted);
+  }
+  .don-chip.active { background: var(--navy); color: #fff; border-color: var(--navy); }
+
+  .admin-note {
+    font-size: 8.3px; color: var(--muted); font-style: italic; margin-bottom: 8px;
+  }
+  .situacao-box {
+    background: #fdf6e3; border: 1.5px solid var(--gold); border-radius: 7px;
+    padding: 10px 14px; text-align: center;
+  }
+  .situacao-box .label { font-size: 8.5px; color: #8a6a0c; text-transform: uppercase; letter-spacing: .4px; font-weight: 700; }
+  .situacao-box .value { font-size: 15px; font-weight: 700; color: #6b4e08; margin-top: 3px; }
+
+  .signature { margin-top: 26px; display: flex; justify-content: space-between; gap: 18px; }
+  .signature div {
+    border-top: 1.5px solid var(--navy); padding-top: 5px; flex: 1;
+    text-align: center; font-size: 8.5px; color: var(--muted);
+  }
+  .signature div b { display: block; color: var(--ink); font-size: 9.5px; margin-bottom: 1px; font-weight: 600; }
+</style>
+</head>
+<body>
+
+{% macro field(label, value, full=False) -%}
+<div class="field{{ ' full' if full else '' }}"><div class="k">{{ label }}</div><div class="v">{{ v(value) }}</div></div>
+{%- endmacro %}
+
+{% macro field_html(label, value_html, full=False) -%}
+<div class="field{{ ' full' if full else '' }}"><div class="k">{{ label }}</div><div class="v">{{ value_html }}</div></div>
+{%- endmacro %}
+
+{% macro field_detail(label, check_html, detail_label, detail_value, full=True) -%}
+<div class="field{{ ' full' if full else '' }}">
+  <div class="k">{{ label }}</div>
+  <div class="v">{{ check_html }}{% if detail_value %}<span class="detail">{{ detail_label }}: {{ v(detail_value) }}</span>{% endif %}</div>
+</div>
+{%- endmacro %}
+
+{% macro tempo(anos, meses) -%}
+{%- if not anos and not meses -%}—{%- else -%}{{ anos or 0 }}a {{ meses or 0 }}m{%- endif -%}
+{%- endmacro %}
+
+{% macro vezes_ano(n, ano) -%}
+{%- if n or ano -%}{{ n or '?' }} vez(es) em {{ ano or '?' }}{%- endif -%}
+{%- endmacro %}
+
+<!-- ═══════════════════════════════════════════════════════
+     CAPA / IDENTIFICAÇÃO
+═══════════════════════════════════════════════════════ -->
+<div class="cover">
+  <div class="brand">
+    <small>Igreja Cristã Maranata</small>
+    <h1>Ficha de Obreiro</h1>
+    <div class="subtitle">Formulário de credenciamento e acompanhamento ministerial</div>
+  </div>
+  <div class="meta">
+    <span class="badge">Nº {{ v(numero) }}</span>
+    <div class="date">Gerado em {{ gerado_em }}</div>
+  </div>
+</div>
+
+<div class="identity">
+  <div class="photo-box">
+    {% if foto_base64 %}
+      <img src="{{ foto_base64 }}">
+    {% else %}
+      Foto 3x4<br>(terno e gravata)
+    {% endif %}
+  </div>
+  <div class="identity-main">
+    <div class="name">{{ v(nome) }}</div>
+    <div class="identity-chips">
+      <span class="id-chip"><b>Função</b>{{ v(funcao_atual) }}</span>
+      <span class="id-chip"><b>Idade</b>{{ v(idade) }}</span>
+      <span class="id-chip"><b>Nascimento</b>{{ v(data_nascimento) }}</span>
+      <span class="id-chip"><b>Estado Civil</b>{{ v(estado_civil) }}</span>
+      <span class="id-chip"><b>Profissão</b>{{ v(profissao) }}</span>
+      <span class="id-chip"><b>Preenchido em</b>{{ v(data_preenchimento) }}</span>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════
+     DADOS PESSOAIS
+═══════════════════════════════════════════════════════ -->
+<section>
+  <h2>Dados Pessoais</h2>
+  <div class="section-body">
+    <div class="sub-section">Informações Pessoais</div>
+    <div class="grid">
+      {{ field("Escolaridade", escolaridade) }}
+      {{ field("Estado Civil", estado_civil) }}
+      {{ field("Idade", idade) }}
+    </div>
+
+    <div class="sub-section">Endereço e Contato</div>
+    <div class="grid">
+      {{ field("Rua", endereco_rua, full=True) }}
+      {{ field("Bairro", endereco_bairro) }}
+      {{ field("Cidade", endereco_cidade) }}
+      {{ field("UF", endereco_uf) }}
+      {{ field("CEP", endereco_cep) }}
+      {{ field("E-mail", email) }}
+      {{ field("Telefone", telefone) }}
+    </div>
+
+    <div class="sub-section">Documentação e Dados Profissionais</div>
+    <div class="grid">
+      {{ field("Carteira de Identidade", rg) }}
+      {{ field("OE (Órgão Emissor)", oe_orgao_emissor) }}
+      {{ field("C.P.F.", cpf) }}
+      {{ field("Empregado", empregado) }}
+      {{ field_html("Tempo de Emprego", tempo(tempo_emprego_anos, tempo_emprego_meses)) }}
+      {{ field("Empresa", empresa) }}
+    </div>
+
+    <div class="sub-section">Dados Militares e Aposentadoria</div>
+    <div class="grid">
+      {{ field("Se Militar — Qual Patente", militar_patente) }}
+      {{ field("Arma", arma) }}
+      {{ field("Se Aposentado (motivo)", aposentado_motivo) }}
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════
+     VIDA ESPIRITUAL
+═══════════════════════════════════════════════════════ -->
+<section>
+  <h2>Vida Espiritual</h2>
+  <div class="section-body">
+
+    <div class="sub-section">Função e Tempo</div>
+    <div class="grid">
+      {{ field("01) Função Atual", funcao_atual) }}
+      {{ field_html("02) Tempo na Função", tempo(tempo_funcao_anos, tempo_funcao_meses)) }}
+      {{ field_html("08) Tempo na ICM", tempo(tempo_icm_anos, tempo_icm_meses)) }}
+    </div>
+
+    <div class="sub-section">Ministério e Serviço</div>
+    <div class="grid">
+      {{ field_html("03) Grupo de Intercessão?", check(grupo_intercessao)) }}
+      {{ field_detail("04) Responsável por trabalho/igreja?", check(responsavel_trabalho), "Qual", responsavel_trabalho_qual) }}
+      {{ field("05) Crescimento do grupo (%)", crescimento_grupo_pct) }}
+      {{ field("06) Visitas/mês aos irmãos", visitas_mes) }}
+      {{ field_html("07) Dizimista Fiel?", check(dizimista_fiel)) }}
+    </div>
+
+    <div class="sub-section">Tempo na ICM e Histórico</div>
+    <div class="grid">
+      {{ field_detail("09) Já afastou-se da igreja?", check(afastou_igreja), "Motivo", afastou_igreja_motivo) }}
+      {{ field("Datas do afastamento", [afastou_data1, afastou_data2, afastou_data3] | select | join(" · ")) }}
+      {{ field_detail("10) Foi provado? (folha anexa)", check(foi_provado), "Quais", foi_provado_qual) }}
+      {{ field_html("11) Tem experiência? (folha anexa)", check(tem_experiencia)) }}
+      {{ field_html("12) Tem sequelas do passado?", check(tem_sequelas_passado)) }}
+      {{ field("13) Últimos Seminários", [ultimo_seminario1, ultimo_seminario2, ultimo_seminario3] | select | join(" · ")) }}
+    </div>
+
+    <div class="sub-section">14) Participação no Maanaim/Igreja</div>
+    <div class="maanaim-grid">
+      <div class="don-chip {{ 'active' if participa_maanaim_voluntario }}">Voluntário</div>
+      <div class="don-chip {{ 'active' if participa_maanaim_meio_semana }}">Meio Semana</div>
+      <div class="don-chip {{ 'active' if participa_maanaim_final_semana }}">Final de Semana</div>
+    </div>
+
+    <div class="sub-section">Vida Devocional e Caráter</div>
+    <div class="grid">
+      {{ field_html("15) Participa dos cultos de madrugada?", check(participa_madrugada)) }}
+      {{ field_html("16) É integrado ao culto profético?", check(integrado_culto_profetico)) }}
+      {{ field_html("17) Tem governo no lar e na igreja?", check(tem_governo_lar)) }}
+      {{ field_html("18) A família é integrada na ICM?", check(familia_integrada)) }}
+      {{ field_html("19) Respeita o pastor e o presbitério?", check(respeita_pastor_presbiterio)) }}
+      {{ field_html("20) É zeloso com os bens da ICM?", check(zelo_bens_icm)) }}
+    </div>
+
+    <div class="sub-section">21) Dons Espirituais</div>
+    <div class="dons-grid">
+      <div class="don-chip {{ 'active' if dons_linguas }}">Línguas</div>
+      <div class="don-chip {{ 'active' if dons_interpretacao }}">Interpretação</div>
+      <div class="don-chip {{ 'active' if dons_ciencia }}">Ciência</div>
+      <div class="don-chip {{ 'active' if dons_sonho }}">Sonho</div>
+      <div class="don-chip {{ 'active' if dons_visao }}">Visão</div>
+      <div class="don-chip {{ 'active' if dons_revelacao }}">Revelação</div>
+    </div>
+
+    <div class="sub-section">Histórico</div>
+    <div class="grid">
+      {{ field_html("22) Veio de outra igreja? Qual?", check(veio_outra_igreja), full=True) }}
+      {{ field_html("23) É cumpridor de suas obrigações?", check(cumpridor_obrigacoes)) }}
+      {{ field_html("24) Tem dívida com irmãos da igreja?", check(divida_irmaos)) }}
+    </div>
+
+    <div class="sub-section">Família</div>
+    <div class="grid">
+      {{ field("25) Tempo de Casado", tempo_casado) }}
+      {{ field("26) Nome da Esposa", nome_esposa) }}
+      {{ field("27) Função da Esposa", funcao_esposa) }}
+      {{ field("28) Profissão da Esposa", profissao_esposa) }}
+      {{ field("29) Estado Civil Antes — Candidato", estado_civil_antes_candidato) }}
+      {{ field("30) Estado Civil Antes — Esposa", estado_civil_antes_esposa) }}
+      {{ field("31) Quantos Filhos", quantos_filhos) }}
+      {{ field("Membros da família na igreja", quantos_membros_igreja) }}
+      {{ field("32) Caso não tenha filhos, motivo", filhos_motivo_sem, full=True) }}
+    </div>
+
+    <div class="sub-section">Formação e Prática</div>
+    <div class="grid">
+      {{ field_html("33) Disposto a ministério voluntário?", check(disposto_ministerio_voluntario)) }}
+      {{ field_detail("34) Leu toda a Bíblia?", check(leu_toda_biblia), "Se não, quantos livros leu", livros_lidos) }}
+      {{ field_html("35) Pratica ensinos do Satélite/EBD?", check(pratica_ensinos_satelite)) }}
+      {{ field_html("36) Aplica assuntos do Satélite na igreja?", check(aplica_satelite_igreja)) }}
+      {{ field_detail("37) Concluiu o Instituto Bíblico?", check(concluiu_instituto_biblico), "Qual curso", curso_realizado) }}
+      {{ field("38) Frequência média da igreja", frequencia_media_igreja) }}
+      {{ field_html("39) Estuda à noite?", sim_nao(estuda_noite_sim, estuda_noite_nao)) }}
+      {{ field_html("40) Disposto a realizar viagem?", check(disposto_viagem)) }}
+      {{ field("41) Contribuições EBD/mês", contribuicoes_ebd_mes) }}
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════
+     ÁREA DO PASTOR
+═══════════════════════════════════════════════════════ -->
+<section>
+  <h2>Área do Pastor Responsável</h2>
+  <div class="section-body">
+    <div class="grid grid-2">
+      {{ field("Igreja", pastor_igreja) }}
+      {{ field("Cidade / UF", v(pastor_cidade) + " / " + v(pastor_uf)) }}
+    </div>
+    <div class="grid" style="margin-top:8px;">
+      {{ field("01) Função a ser apresentado", funcao_apresentada) }}
+      {{ field_html("03) Tem mensagem revelada? (folha anexa)", check(tem_mensagem_revelada)) }}
+      {{ field_html("04) Transmite bem a mensagem?", check(transmite_bem_mensagem)) }}
+      {{ field("02) Característica do ministério", caracteristica_ministerio, full=True) }}
+      {{ field("05) Defeito (tímido/afoito/lento/rígido etc.)", defeito) }}
+      {{ field_html("06) Tem bom testemunho?", check(tem_bom_testemunho)) }}
+      {{ field_html("07) Tem maturidade nos dons?", check(maturidade_dons)) }}
+      {{ field_html("08) Gosta de imitar movimentos?", check(gosta_imitar_movimentos)) }}
+      {{ field_html("09) É gastador?", check(e_gastador)) }}
+      {{ field_detail("10) Dado a comentários depreciativos?", check(dado_comentarios_depreciativos), "Quais", comentarios_depreciativos_quais) }}
+      {{ field_html("11) É pontual?", check(pontual)) }}
+      {{ field_html("12) É sóbrio no vestir?", check(sobrio_vestir)) }}
+      {{ field("13) Nº igrejas no bairro/cidade", numero_igrejas_bairro) }}
+      {{ field("14) Nº pastores no bairro/cidade", numero_pastores_bairro) }}
+      {{ field_detail("15) Obediente aos dons relacionados?", check(obediente_dons), "Outra(s)? Quais", obediente_dons_quais) }}
+      {{ field_detail("16) Já foi apresentado para esta função?", check(ja_apresentado_antes), "Quantas vezes / Ano", vezes_ano(quantas_vezes_apresentado, ano_apresentacao)) }}
+      {{ field("Caso não tenha sido aprovado, motivo", motivo_nao_aprovado, full=True) }}
+      {{ field("17) Igreja que o candidato assumirá", igreja_assumira, full=True) }}
+      {{ field("Observação do Pastor Responsável / Dom da Igreja", observacao_pastor, full=True) }}
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════
+     EXPERIÊNCIAS COM RECURSOS DA GRAÇA
+═══════════════════════════════════════════════════════ -->
+<section>
+  <h2>Experiências com Recursos da Graça (Meios de Graça)</h2>
+  <div class="section-body">
+    {{ field("Nome", nome) }}
+    <div class="grid" style="margin-top:7px;">
+      {{ field("Clamor pelo Sangue de Jesus / Oração", experiencia_clamor, full=True) }}
+      {{ field("Jejum", experiencia_jejum, full=True) }}
+      {{ field("Madrugada", experiencia_madrugada, full=True) }}
+      {{ field("Consulta à Palavra", experiencia_palavra, full=True) }}
+      {{ field("Louvor", experiencia_louvor, full=True) }}
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════
+     EXPERIÊNCIAS DO OBREIRO
+═══════════════════════════════════════════════════════ -->
+<section>
+  <h2>Experiências do Obreiro</h2>
+  <div class="section-body">
+    {{ field("Nome", nome) }}
+    <div class="grid" style="margin-top:7px;">
+      {{ field("Dons que se cumpriram", dons_cumpridos, full=True) }}
+      {{ field("Provas vividas", provas_vividas, full=True) }}
+      {{ field("Experiências vividas", experiencias_vividas, full=True) }}
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════
+     MENSAGENS REVELADAS
+═══════════════════════════════════════════════════════ -->
+<section>
+  <h2>Mensagens Reveladas</h2>
+  <div class="section-body">
+    {{ field("Nome", nome) }}
+
+    <div class="sub-section">1ª Mensagem</div>
+    <div class="grid grid-2">
+      {{ field("Texto (referência bíblica)", msg1_texto) }}
+      {{ field("Tema", msg1_tema) }}
+    </div>
+    <div class="field full" style="margin-top:6px;">
+      <div class="k">Descreva aqui a mensagem revelada</div>
+      <div class="textarea-v">{{ v(msg1_descricao) }}</div>
+    </div>
+
+    <div class="sub-section">2ª Mensagem</div>
+    <div class="grid grid-2">
+      {{ field("Texto (referência bíblica)", msg2_texto) }}
+      {{ field("Tema", msg2_tema) }}
+    </div>
+    <div class="field full" style="margin-top:6px;">
+      <div class="k">Descreva aqui a mensagem revelada</div>
+      <div class="textarea-v">{{ v(msg2_descricao) }}</div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════
+     QUESTIONÁRIO
+═══════════════════════════════════════════════════════ -->
+<section>
+  <h2>Questionário — Comentário Sobre os Temas Abaixo</h2>
+  <div class="section-body">
+    {{ field("Nome", nome) }}
+    <div class="grid" style="margin-top:7px;">
+      {{ field("Palavra Revelada", palavra_revelada, full=True) }}
+      {{ field("Clamor pelo Poder do Sangue de Jesus", clamor_sangue_jesus, full=True) }}
+      {{ field("Igreja Corpo de Cristo", igreja_corpo_cristo, full=True) }}
+      {{ field("Salvação", salvacao, full=True) }}
+      {{ field("Origens da Fé / Fé Histórica e Profética", origens_fe, full=True) }}
+      {{ field("Sacerdócio Universal do Crente", sacerdocio_universal, full=True) }}
+      {{ field("Objetivo das Transmissões via Satélite", objetivo_satelite, full=True) }}
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════
+     QUESTIONÁRIO PARA ESPOSAS
+═══════════════════════════════════════════════════════ -->
+<section>
+  <h2>Questionário para Esposas dos Ungidos</h2>
+  <div class="section-body">
+    {%- set esposa_preenchido = q1_acordo_ordenacao or q2_concorda_doutinas or q3_ministerio_voluntario or q4_nao_interferir or q5_outros or assinatura_esposa %}
+    <div class="grid grid-2">
+      {{ field("Nome do Ungido", nome if esposa_preenchido else None) }}
+      {{ field("Nome da Esposa", nome_esposa) }}
+    </div>
+    <div class="grid" style="margin-top:7px;">
+      {{ field("1) De acordo com a ordenação e o propósito do esposo?", q1_acordo_ordenacao, full=True) }}
+      {{ field("2) Concorda com as doutrinas e orientações do Presbitério?", q2_concorda_doutinas, full=True) }}
+      {{ field("3) Concorda com o ministério voluntário?", q3_ministerio_voluntario, full=True) }}
+      {{ field("4) Entende que não deve interferir no ministério do esposo?", q4_nao_interferir, full=True) }}
+      {{ field("5) Outros comentários", q5_outros, full=True) }}
+    </div>
+    {{ field("Assinatura da Esposa", assinatura_esposa, full=True) }}
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════
+     SITUAÇÃO FINAL (preenchimento da liderança)
+═══════════════════════════════════════════════════════ -->
+<section>
+  <h2>Situação Final</h2>
+  <div class="section-body">
+    <div class="admin-note">Preenchimento exclusivo do pastor responsável / presbitério, após a avaliação da ficha.</div>
+    <div class="situacao-box">
+      <div class="label">Situação</div>
+      <div class="value">{{ v(situacao) }}</div>
+    </div>
+    <div class="grid" style="margin-top:10px;">
+      {{ field("Dom na Comissão da Área/Pólo", dom_comissao_area, full=True) }}
+      {{ field("Dom na Comissão da Região", dom_comissao_regiao, full=True) }}
+    </div>
+  </div>
+</section>
+
+<div class="signature">
+  <div><b>{{ v(nome) }}</b>Assinatura do Obreiro</div>
+  <div><b>{{ v(assinatura_pastor) }}</b>Assinatura do Pastor Responsável</div>
+</div>
+
+</body>
+</html>

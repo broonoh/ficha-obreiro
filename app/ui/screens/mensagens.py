@@ -4,29 +4,7 @@ from kivymd.uix.boxlayout import MDBoxLayout
 from kivymd.uix.textfield import MDTextField
 from kivymd.uix.label import MDLabel
 from app.ui.widgets.limited_text_field import LimitedTextField
-
-
-class FieldRow(MDBoxLayout):
-    """Linha label + campo simples (TEXTO e TEMA)."""
-    def __init__(self, label_text, field, **kwargs):
-        super().__init__(**kwargs)
-        self.orientation = "vertical"
-        self.size_hint_y = None
-        self.height = dp(80)
-        self.spacing = dp(4)
-        self.padding = [dp(4), dp(4), dp(4), dp(4)]
-
-        lbl = MDLabel(
-            text=label_text,
-            font_style="Caption",
-            theme_text_color="Custom",
-            text_color=(0.012, 0.133, 0.247, 1),
-            size_hint_y=None,
-            height=dp(18),
-            bold=True,
-        )
-        self.add_widget(lbl)
-        self.add_widget(field)
+from app.ui.widgets.field_row import FieldRow
 
 
 class SectionTitle(MDLabel):
@@ -40,6 +18,17 @@ class SectionTitle(MDLabel):
         self.height = dp(48)
         self.bold = True
         self.padding = [0, dp(12), 0, dp(8)]
+        self.bind(width=self._resize_to_text, texture_size=self._resize_to_text)
+
+    def _resize_to_text(self, *_args):
+        # Ver comentário equivalente em experiencias.py: width 0 no
+        # primeiro frame gera uma altura sem sentido que podia "grudar"
+        # como um espaço vazio enorme antes do título.
+        if self.width <= 0:
+            return
+        self.text_size = (self.width, None)
+        self.texture_update()
+        self.height = max(dp(48), self.texture_size[1] + self.padding[1] + self.padding[3])
 
 
 class SubTitle(MDLabel):
@@ -53,6 +42,14 @@ class SubTitle(MDLabel):
         self.height = dp(40)
         self.bold = True
         self.padding = [0, dp(12), 0, dp(4)]
+        self.bind(width=self._resize_to_text, texture_size=self._resize_to_text)
+
+    def _resize_to_text(self, *_args):
+        if self.width <= 0:
+            return
+        self.text_size = (self.width, None)
+        self.texture_update()
+        self.height = max(dp(40), self.texture_size[1] + self.padding[1] + self.padding[3])
 
 
 class MensagensContent(MDBoxLayout):

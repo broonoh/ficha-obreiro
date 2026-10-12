@@ -78,3 +78,7 @@ class DateField(MDBoxLayout):
     @property
     def hint_text(self):
         return self.text_field.hint_text
+
+    @hint_text.setter
+    def hint_text(self, value):
+        self.text_field.hint_text = value

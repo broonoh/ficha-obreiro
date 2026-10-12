@@ -17,6 +17,14 @@ class SectionTitle(MDLabel):
         self.height = dp(48)
         self.bold = True
         self.padding = [0, dp(12), 0, dp(8)]
+        self.bind(width=self._resize_to_text, texture_size=self._resize_to_text)
+
+    def _resize_to_text(self, *_args):
+        if self.width <= 0:
+            return
+        self.text_size = (self.width, None)
+        self.texture_update()
+        self.height = max(dp(48), self.texture_size[1] + self.padding[1] + self.padding[3])
 
 
 class QuestionarioEsposaContent(MDBoxLayout):

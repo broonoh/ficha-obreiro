@@ -16,6 +16,20 @@ class SectionTitle(MDLabel):
         self.height = dp(48)
         self.bold = True
         self.padding = [0, dp(12), 0, dp(8)]
+        self.bind(width=self._resize_to_text, texture_size=self._resize_to_text)
+
+    def _resize_to_text(self, *_args):
+        # Width 0 acontece no primeiro frame, antes do layout do pai
+        # definir o tamanho real — calcular o texto nesse momento dá uma
+        # altura (texture_size) sem sentido (ex.: cada caractere numa
+        # linha), e como o MDExpansionPanel só lê a altura do conteúdo no
+        # instante em que abre, esse valor errado podia "grudar" e deixar
+        # um espaço vazio enorme antes do título.
+        if self.width <= 0:
+            return
+        self.text_size = (self.width, None)
+        self.texture_update()
+        self.height = max(dp(48), self.texture_size[1] + self.padding[1] + self.padding[3])
 
 
 class ExperienciasGracaContent(MDBoxLayout):

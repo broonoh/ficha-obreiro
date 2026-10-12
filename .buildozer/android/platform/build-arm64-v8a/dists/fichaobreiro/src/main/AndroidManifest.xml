@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Replace org.libsdl.app with the identifier of your game below, e.g.
+     com.gamemaker.game
+-->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+      android:versionCode="102410000"
+      android:versionName="1.0.0"
+      android:installLocation="auto">
+
+    <supports-screens
+            android:smallScreens="true"
+            android:normalScreens="true"
+            android:largeScreens="true"
+            android:anyDensity="true"
+            
+            android:xlargeScreens="true"
+            
+    />
+
+    <!-- Android 2.3.3 -->
+    <uses-sdk android:minSdkVersion="24" android:targetSdkVersion="34" />
+
+    <!-- OpenGL ES 2.0 -->
+    <uses-feature android:glEsVersion="0x00020000" />
+
+    <!-- Set permissions -->
+    
+        <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    
+        <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    
+        <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
+    
+        <uses-permission android:name="android.permission.READ_MEDIA_VIDEO" />
+    
+        <uses-permission android:name="android.permission.READ_MEDIA_AUDIO" />
+    
+        <uses-permission android:name="android.permission.INTERNET" />
+    
+
+    
+
+    
+
+    
+
+
+    <!-- Create a Java class extending SDLActivity and place it in a
+         directory under src matching the package, e.g.
+         	src/com/gamemaker/game/MyGame.java
+
+         then replace "SDLActivity" with the name of your class (e.g. "MyGame")
+         in the XML below.
+
+         An example Java class can be found in README-android.txt
+    -->
+    <application android:label="@string/app_name"
+                 android:debuggable="true"
+                 android:icon="@mipmap/icon"
+                 android:allowBackup="true"
+                 
+                 
+                 android:theme="@android:style/Theme.NoTitleBar"
+                 android:hardwareAccelerated="true"
+                 android:extractNativeLibs="true" >
+        
+
+        
+        <meta-data android:name="wakelock" android:value="0"/>
+
+        <activity android:name="org.kivy.android.PythonActivity"
+                  android:label="@string/app_name"
+                  android:configChanges="mcc|mnc|locale|touchscreen|keyboard|keyboardHidden|navigation|orientation|screenLayout|fontScale|uiMode|uiMode|screenSize|smallestScreenSize|layoutDirection|density"
+                  android:screenOrientation="unspecified"
+                  android:exported="true"
+                  
+                  android:launchMode="singleTask"
+                  
+                  >
+
+            <intent-filter>
+            
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            
+
+            
+            </intent-filter><!--
+    Faz o app aparecer na folha de compartilhamento nativa do Android
+    (o mesmo menu que abre ao tocar em "Compartilhar" num arquivo no
+    WhatsApp, Drive, gerenciador de arquivos etc.) para os arquivos .json
+    exportados por este mesmo app (ver app/services/storage.py). Também
+    permite abrir o app tocando direto num desses arquivos (ACTION_VIEW).
+
+    Vários remetentes (WhatsApp incluso) nem sempre preservam o MIME type
+    "application/json" corretamente — por isso cobrimos também
+    "application/octet-stream" (fallback genérico comum para extensões
+    não reconhecidas) para não depender só de uma detecção de MIME.
+-->
+<intent-filter>
+    <action android:name="android.intent.action.SEND" />
+    <category android:name="android.intent.category.DEFAULT" />
+    <data android:mimeType="application/json" />
+</intent-filter>
+<intent-filter>
+    <action android:name="android.intent.action.SEND" />
+    <category android:name="android.intent.category.DEFAULT" />
+    <data android:mimeType="application/octet-stream" />
+</intent-filter>
+<intent-filter>
+    <action android:name="android.intent.action.VIEW" />
+    <category android:name="android.intent.category.DEFAULT" />
+    <category android:name="android.intent.category.BROWSABLE" />
+    <data android:mimeType="application/json" />
+</intent-filter>
+</activity>
+
+        
+
+        
+        
+        
+
+        
+    
+    </application>
+
+</manifest>

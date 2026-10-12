@@ -2,8 +2,9 @@
 """Campo de foto 3x4 com upload e remoção — versão simplificada."""
 import base64
 import os
-from pathlib import Path
 from kivy.metrics import dp
+from kivy.utils import platform
+from app.services.paths import pasta_privada_app
 from kivy.uix.image import Image as KivyImage
 from kivy.clock import Clock
 from kivymd.uix.boxlayout import MDBoxLayout
@@ -11,6 +12,16 @@ from kivymd.uix.button import MDFlatButton
 from kivymd.uix.label import MDLabel
 from kivymd.uix.filemanager import MDFileManager
 from PIL import Image
+
+# Pillow >=9.1 move o filtro de reamostragem para Image.Resampling.LANCZOS
+# e Pillow >=10 removeu o alias antigo Image.LANCZOS; a versão empacotada
+# pelo python-for-android no Android é mais antiga e só tem o alias
+# antigo — sem isso, qualquer preview de foto quebra lá com
+# "module 'PIL.Image' has no attribute 'Resampling'".
+try:
+    _RESAMPLE_LANCZOS = Image.Resampling.LANCZOS
+except AttributeError:
+    _RESAMPLE_LANCZOS = Image.LANCZOS
 
 
 class PhotoField(MDBoxLayout):
@@ -114,7 +125,14 @@ class PhotoField(MDBoxLayout):
                 select_path=self._select_path,
                 ext=[".jpg", ".jpeg", ".png", ".JPG", ".JPEG", ".PNG"],
             )
-        self.file_manager.show(str(Path.home()))
+        start_path = str(pasta_privada_app())
+        if platform == "android":
+            try:
+                from android.storage import primary_external_storage_path
+                start_path = primary_external_storage_path()
+            except Exception:
+                pass
+        self.file_manager.show(start_path)
 
     def _close_file_manager(self, *args):
         self.file_manager.close()
@@ -142,7 +160,7 @@ class PhotoField(MDBoxLayout):
                 img = img.convert('RGB')
 
             # Salva cópia temporária em local seguro
-            temp_path = Path.home() / ".ficha_obreiro_temp.jpg"
+            temp_path = pasta_privada_app() / ".ficha_obreiro_temp.jpg"
             img.save(temp_path, "JPEG", quality=95)
 
             self.photo_path = str(temp_path)
@@ -185,13 +203,13 @@ class PhotoField(MDBoxLayout):
         try:
             # Carrega e redimensiona a imagem
             img = Image.open(self.photo_path)
-            img.thumbnail((120, 160), Image.Resampling.LANCZOS)
+            img.thumbnail((120, 160), _RESAMPLE_LANCZOS)
 
             if img.mode != 'RGB':
                 img = img.convert('RGB')
 
             # Salva preview temporário
-            temp_preview = Path.home() / ".ficha_obreiro_preview.jpg"
+            temp_preview = pasta_privada_app() / ".ficha_obreiro_preview.jpg"
             img.save(temp_preview, "JPEG", quality=95)
 
             # Cria widget de imagem do Kivy
@@ -230,3 +248,26 @@ class PhotoField(MDBoxLayout):
 
     def get_photo_path(self) -> str:
         return self.photo_path or ""
+
+    def set_photo_from_base64(self, data_uri: str):
+        """Restaura a foto a partir do data URI (base64) salvo no .json
+        exportado — ao contrário de `photo_path`, que é um caminho
+        absoluto do dispositivo que gerou o arquivo (e quase nunca existe
+        em outro aparelho/instalação), o base64 é portável e é a forma
+        correta de reimportar a foto em outro dispositivo (ex.: pastor
+        importando a ficha enviada pelo obreiro)."""
+        if not data_uri:
+            return
+        try:
+            _, _, codificado = data_uri.partition("base64,")
+            dados_binarios = base64.b64decode(codificado or data_uri)
+
+            temp_path = pasta_privada_app() / ".ficha_obreiro_temp.jpg"
+            with open(temp_path, "wb") as f:
+                f.write(dados_binarios)
+
+            self.photo_path = str(temp_path)
+            self._update_preview()
+        except Exception as e:
+            print(f"❌ Erro ao restaurar foto do base64: {e}")
+            self._show_error("Erro ao carregar foto")

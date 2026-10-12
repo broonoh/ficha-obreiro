@@ -1,0 +1,28 @@
+<!--
+    Faz o app aparecer na folha de compartilhamento nativa do Android
+    (o mesmo menu que abre ao tocar em "Compartilhar" num arquivo no
+    WhatsApp, Drive, gerenciador de arquivos etc.) para os arquivos .json
+    exportados por este mesmo app (ver app/services/storage.py). Também
+    permite abrir o app tocando direto num desses arquivos (ACTION_VIEW).
+
+    Vários remetentes (WhatsApp incluso) nem sempre preservam o MIME type
+    "application/json" corretamente — por isso cobrimos também
+    "application/octet-stream" (fallback genérico comum para extensões
+    não reconhecidas) para não depender só de uma detecção de MIME.
+-->
+<intent-filter>
+    <action android:name="android.intent.action.SEND" />
+    <category android:name="android.intent.category.DEFAULT" />
+    <data android:mimeType="application/json" />
+</intent-filter>
+<intent-filter>
+    <action android:name="android.intent.action.SEND" />
+    <category android:name="android.intent.category.DEFAULT" />
+    <data android:mimeType="application/octet-stream" />
+</intent-filter>
+<intent-filter>
+    <action android:name="android.intent.action.VIEW" />
+    <category android:name="android.intent.category.DEFAULT" />
+    <category android:name="android.intent.category.BROWSABLE" />
+    <data android:mimeType="application/json" />
+</intent-filter>

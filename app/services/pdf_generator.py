@@ -57,21 +57,30 @@ def gerar_pdf(dados: dict) -> str:
     # afetar texto real (campos multilinha do usuário não têm ">...<" puro).
     html = re.sub(r">\s+<", "><", html)
 
-    out_dir = Path.home() / "FichaObreiro"
-    out_dir.mkdir(parents=True, exist_ok=True)
+    from app.services.paths import pasta_fichas
+    out_dir = pasta_fichas()
 
-    nome_seguro = (dados.get("nome") or "ficha").replace(" ", "_")[:40]
-    ts = datetime.now().strftime("%Y%m%d_%H%M%S")
-    path = out_dir / f"Ficha_{nome_seguro}_{ts}.pdf"
+    nome_seguro = (dados.get("nome") or "Obreiro").strip().replace(" ", "_")[:40]
+    html_path = out_dir / f"Ficha_Obreiro_{nome_seguro}.html"
+    html_path.write_text(html, encoding="utf-8")
+
+    from kivy.utils import platform
+    if platform == "android":
+        # WeasyPrint ainda depende de Pango/GObject/HarfBuzz/Fontconfig
+        # (bibliotecas C do desktop Linux) — sem receita no
+        # python-for-android, não há como gerar PDF nativo no Android por
+        # essa via. O HTML gerado aqui é usado pela tela de "Imprimir como
+        # PDF" nativa do Android (app/services/android_print.py), que
+        # produz o PDF de verdade usando o WebView do próprio sistema.
+        return str(html_path)
 
     try:
         from weasyprint import HTML
-        HTML(string=html).write_pdf(str(path))
-    except Exception as e:
-        html_path = path.with_suffix(".html")
-        html_path.write_text(html, encoding="utf-8")
-        raise RuntimeError(
-            f"WeasyPrint indisponível ({e}). HTML salvo em {html_path}."
-        )
-
-    return str(path)
+        pdf_path = html_path.with_suffix(".pdf")
+        HTML(string=html).write_pdf(str(pdf_path))
+        html_path.unlink(missing_ok=True)
+        return str(pdf_path)
+    except Exception:
+        import traceback
+        traceback.print_exc()
+        return str(html_path)

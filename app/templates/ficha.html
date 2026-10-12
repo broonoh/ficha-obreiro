@@ -307,7 +307,7 @@
       {{ field("Datas do afastamento", [afastou_data1, afastou_data2, afastou_data3] | select | join(" · ")) }}
       {{ field_detail("10) Foi provado? (folha anexa)", check(foi_provado), "Quais", foi_provado_qual) }}
       {{ field_html("11) Tem experiência? (folha anexa)", check(tem_experiencia)) }}
-      {{ field("12) Tem sequelas do passado?", tem_sequelas_passado) }}
+      {{ field_html("12) Tem sequelas do passado?", check(tem_sequelas_passado)) }}
       {{ field("13) Últimos Seminários", [ultimo_seminario1, ultimo_seminario2, ultimo_seminario3] | select | join(" · ")) }}
     </div>
 
@@ -340,15 +340,14 @@
 
     <div class="sub-section">Histórico</div>
     <div class="grid">
-      {{ field("22) Veio de outra igreja? Qual?", veio_outra_igreja, full=True) }}
+      {{ field_html("22) Veio de outra igreja? Qual?", check(veio_outra_igreja), full=True) }}
       {{ field_html("23) É cumpridor de suas obrigações?", check(cumpridor_obrigacoes)) }}
       {{ field_html("24) Tem dívida com irmãos da igreja?", check(divida_irmaos)) }}
     </div>
 
     <div class="sub-section">Família</div>
     <div class="grid">
-      {{ field("25) Tempo Casado — Candidato", tempo_casado_candidato) }}
-      {{ field("25) Tempo Casado — Esposa", tempo_casado_esposa) }}
+      {{ field("25) Tempo de Casado", tempo_casado) }}
       {{ field("26) Nome da Esposa", nome_esposa) }}
       {{ field("27) Função da Esposa", funcao_esposa) }}
       {{ field("28) Profissão da Esposa", profissao_esposa) }}
@@ -495,8 +494,9 @@
 <section>
   <h2>Questionário para Esposas dos Ungidos</h2>
   <div class="section-body">
+    {%- set esposa_preenchido = q1_acordo_ordenacao or q2_concorda_doutinas or q3_ministerio_voluntario or q4_nao_interferir or q5_outros or assinatura_esposa %}
     <div class="grid grid-2">
-      {{ field("Nome do Ungido", nome) }}
+      {{ field("Nome do Ungido", nome if esposa_preenchido else None) }}
       {{ field("Nome da Esposa", nome_esposa) }}
     </div>
     <div class="grid" style="margin-top:7px;">

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Ficha do Obreiro</string>
+    <string name="private_version">0dae1ffce04a95f5d0afd29c1a284e0996a132fc</string>
+    <string name="presplash_color">#03223F</string>
+    <string name="urlScheme">kivy</string>
+</resources>

@@ -5,30 +5,7 @@ from kivymd.uix.textfield import MDTextField
 from kivymd.uix.label import MDLabel
 from app.ui.widgets.photo_field import PhotoField
 from app.ui.widgets.date_field import DateField
-
-
-class FieldRow(MDBoxLayout):
-    """Linha label + campo com espaçamento."""
-
-    def __init__(self, label_text, field, **kwargs):
-        super().__init__(**kwargs)
-        self.orientation = "vertical"
-        self.size_hint_y = None
-        self.height = dp(80)
-        self.spacing = dp(4)
-        self.padding = [dp(4), dp(4), dp(4), dp(4)]
-
-        lbl = MDLabel(
-            text=label_text,
-            font_style="Caption",
-            theme_text_color="Custom",
-            text_color=(0.012, 0.133, 0.247, 1),
-            size_hint_y=None,
-            height=dp(18),
-            bold=True,
-        )
-        self.add_widget(lbl)
-        self.add_widget(field)
+from app.ui.widgets.field_row import FieldRow
 
 
 class SectionTitle(MDLabel):
@@ -44,6 +21,19 @@ class SectionTitle(MDLabel):
         self.height = dp(36)
         self.bold = True
         self.padding = [dp(8), 0, 0, 0]
+        self.bind(width=self._resize_to_text, texture_size=self._resize_to_text)
+
+    def _resize_to_text(self, *_args):
+        # Width 0 acontece no primeiro frame, antes do layout do pai
+        # definir o tamanho real — calcular o texto nesse momento dá uma
+        # altura sem sentido que podia "grudar" como um espaço vazio
+        # enorme antes do título (o MDExpansionPanel só lê a altura do
+        # conteúdo no instante em que abre).
+        if self.width <= 0:
+            return
+        self.text_size = (self.width - self.padding[0] - self.padding[2], None)
+        self.texture_update()
+        self.height = max(dp(36), self.texture_size[1] + self.padding[1] + self.padding[3])
 
 
 class DadosPessoaisContent(MDBoxLayout):

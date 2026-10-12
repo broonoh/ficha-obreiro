@@ -6,40 +6,7 @@ from kivymd.uix.selectioncontrol import MDCheckbox
 from kivymd.uix.label import MDLabel
 from app.ui.widgets.dropdown_field import DropdownField
 from app.ui.widgets.date_field import DateField
-
-
-class FieldRow(MDBoxLayout):
-    def __init__(self, label_text, field, **kwargs):
-        super().__init__(**kwargs)
-        self.orientation = "vertical"
-        self.size_hint_y = None
-        self.height = dp(80)
-        self.spacing = dp(4)
-        self.padding = [dp(4), dp(8), dp(4), dp(4)]
-
-        lbl = MDLabel(
-            text=label_text,
-            font_style="Caption",
-            theme_text_color="Custom",
-            text_color=(0.012, 0.133, 0.247, 1),
-            size_hint_y=None,
-            height=dp(18),
-            bold=True,
-        )
-        self.add_widget(lbl)
-        self.add_widget(field)
-
-
-class CheckRow(MDBoxLayout):
-    def __init__(self, text, checkbox, **kwargs):
-        super().__init__(**kwargs)
-        self.size_hint_y = None
-        self.height = dp(56)
-        self.spacing = dp(12)
-        self.padding = [dp(8), 0, 0, 0]
-        self.add_widget(checkbox)
-        lbl = MDLabel(text=text, valign="middle", font_size="14sp")
-        self.add_widget(lbl)
+from app.ui.widgets.field_row import FieldRow, CheckRow
 
 
 class SectionTitle(MDLabel):
@@ -53,6 +20,14 @@ class SectionTitle(MDLabel):
         self.height = dp(36)
         self.bold = True
         self.padding = [dp(8), 0, 0, 0]
+        self.bind(width=self._resize_to_text, texture_size=self._resize_to_text)
+
+    def _resize_to_text(self, *_args):
+        if self.width <= 0:
+            return
+        self.text_size = (self.width - self.padding[0] - self.padding[2], None)
+        self.texture_update()
+        self.height = max(dp(36), self.texture_size[1] + self.padding[1] + self.padding[3])
 
 
 class VidaEspiritualContent(MDBoxLayout):
@@ -64,6 +39,7 @@ class VidaEspiritualContent(MDBoxLayout):
         self.adaptive_height = True
         self.fields = {}
         self.checks = {}
+        self.checks_touched = {}
         self.dropdowns = {}
 
         # Header
@@ -87,10 +63,10 @@ class VidaEspiritualContent(MDBoxLayout):
         self.add_widget(self.dropdowns["funcao_atual"])
 
         row_tempo = MDBoxLayout(size_hint_y=None, height=dp(80), spacing=dp(12))
-        self.fields["tempo_funcao_meses"] = MDTextField(hint_text="02) MÊS(ES)", mode="fill", input_filter="int")
-        self.fields["tempo_funcao_anos"] = MDTextField(hint_text="ANO(S)", mode="fill", input_filter="int")
-        row_tempo.add_widget(self.fields["tempo_funcao_meses"])
+        self.fields["tempo_funcao_anos"] = MDTextField(hint_text="02) ANO(S)", mode="fill", input_filter="int")
+        self.fields["tempo_funcao_meses"] = MDTextField(hint_text="MÊS(ES)", mode="fill", input_filter="int")
         row_tempo.add_widget(self.fields["tempo_funcao_anos"])
+        row_tempo.add_widget(self.fields["tempo_funcao_meses"])
         self.add_widget(row_tempo)
 
         # ─ 03-07: Ministério ──────────────────────────────
@@ -109,8 +85,14 @@ class VidaEspiritualContent(MDBoxLayout):
             hint_text="06) FAZ QUANTAS VISITAS POR MÊS AOS IRMÃOS DA IGREJA?",
             mode="fill", input_filter="int", size_hint_y=None, height=dp(48)
         )
-        self.add_widget(self.fields["crescimento_grupo_pct"])
-        self.add_widget(self.fields["visitas_mes"])
+        self.add_widget(FieldRow(
+            "05) CRESCIMENTO (OU NÃO) DE SEU GRUPO ASSISTÊNCIA OU IGREJA (%)",
+            self.fields["crescimento_grupo_pct"],
+        ))
+        self.add_widget(FieldRow(
+            "06) FAZ QUANTAS VISITAS POR MÊS AOS IRMÃOS DA IGREJA?",
+            self.fields["visitas_mes"],
+        ))
 
         self._add_check("07) É DIZIMISTA FIEL?", "dizimista_fiel")
 
@@ -118,10 +100,10 @@ class VidaEspiritualContent(MDBoxLayout):
         self.add_widget(SectionTitle("TEMPO NA ICM E HISTÓRICO"))
 
         row_icm = MDBoxLayout(size_hint_y=None, height=dp(80), spacing=dp(12))
-        self.fields["tempo_icm_meses"] = MDTextField(hint_text="08) MÊS(ES)", mode="fill", input_filter="int")
-        self.fields["tempo_icm_anos"] = MDTextField(hint_text="ANO(S)", mode="fill", input_filter="int")
-        row_icm.add_widget(self.fields["tempo_icm_meses"])
+        self.fields["tempo_icm_anos"] = MDTextField(hint_text="08) ANO(S)", mode="fill", input_filter="int")
+        self.fields["tempo_icm_meses"] = MDTextField(hint_text="MÊS(ES)", mode="fill", input_filter="int")
         row_icm.add_widget(self.fields["tempo_icm_anos"])
+        row_icm.add_widget(self.fields["tempo_icm_meses"])
         self.add_widget(row_icm)
 
         self._add_check("09) JÁ AFASTOU-SE DA IGREJA POR ALGUM MOTIVO?", "afastou_igreja")
@@ -146,7 +128,7 @@ class VidaEspiritualContent(MDBoxLayout):
 
         self._add_check("11) TEM EXPERIÊNCIA? (FOLHA ANEXA)", "tem_experiencia")
         self.fields["tem_sequelas_passado"] = MDTextField(hint_text="12) TEM SEQÜELAS DO PASSADO?", mode="fill", size_hint_y=None, height=dp(48))
-        self.add_widget(self.fields["tem_sequelas_passado"])
+        self.add_widget(FieldRow("12) TEM SEQÜELAS DO PASSADO?", self.fields["tem_sequelas_passado"]))
 
         self.add_widget(MDLabel(
             text="13) ÚLTIMOS SEMINÁRIOS",
@@ -219,39 +201,43 @@ class VidaEspiritualContent(MDBoxLayout):
         self.fields["veio_outra_igreja"] = MDTextField(hint_text="22) VEIO DE OUTRA IGREJA (DENOMINAÇÃO)? QUAL?", mode="fill", size_hint_y=None, height=dp(48))
         self._add_check("23) É CUMPRIDOR DE SUAS OBRIGAÇÕES NO SEU TRABALHO?", "cumpridor_obrigacoes")
         self._add_check("24) TEM DÍVIDA COM IRMÃOS DA IGREJA?", "divida_irmaos")
-        self.add_widget(self.fields["veio_outra_igreja"])
+        self.add_widget(FieldRow("22) VEIO DE OUTRA IGREJA (DENOMINAÇÃO)? QUAL?", self.fields["veio_outra_igreja"]))
 
         # ── 25-32: Família ─────────────────────────────────
         self.add_widget(SectionTitle("FAMÍLIA"))
 
-        row_casado = MDBoxLayout(size_hint_y=None, height=dp(80), spacing=dp(12))
-        self.fields["tempo_casado_candidato"] = MDTextField(hint_text="25) CANDIDATO (PERÍODO)", mode="fill")
-        self.fields["tempo_casado_esposa"] = MDTextField(hint_text="ESPOSA (PERÍODO)", mode="fill")
-        row_casado.add_widget(self.fields["tempo_casado_candidato"])
-        row_casado.add_widget(self.fields["tempo_casado_esposa"])
-        self.add_widget(row_casado)
+        self.fields["tempo_casado"] = MDTextField(
+            hint_text="25) TEMPO DE CASADO (CANDIDATO E ESPOSA)", mode="fill",
+            size_hint_y=None, height=dp(48),
+        )
+        self.add_widget(FieldRow("25) TEMPO DE CASADO (CANDIDATO E ESPOSA)", self.fields["tempo_casado"]))
 
         self.fields["nome_esposa"] = MDTextField(hint_text="26) NOME DA ESPOSA:", mode="fill", size_hint_y=None, height=dp(48))
         self.fields["funcao_esposa"] = MDTextField(hint_text="27) FUNÇÃO DA ESPOSA NA IGREJA:", mode="fill", size_hint_y=None, height=dp(48))
         self.fields["profissao_esposa"] = MDTextField(hint_text="28) PROFISSÃO DA ESPOSA", mode="fill", size_hint_y=None, height=dp(48))
-        self.add_widget(self.fields["nome_esposa"])
-        self.add_widget(self.fields["funcao_esposa"])
-        self.add_widget(self.fields["profissao_esposa"])
+        self.add_widget(FieldRow("26) NOME DA ESPOSA:", self.fields["nome_esposa"]))
+        self.add_widget(FieldRow("27) FUNÇÃO DA ESPOSA NA IGREJA:", self.fields["funcao_esposa"]))
+        self.add_widget(FieldRow("28) PROFISSÃO DA ESPOSA", self.fields["profissao_esposa"]))
 
         self.fields["estado_civil_antes_candidato"] = MDTextField(hint_text="29) ESTADO CIVIL DO CANDIDATO ANTES DO CASAMENTO ATUAL", mode="fill", size_hint_y=None, height=dp(48))
         self.fields["estado_civil_antes_esposa"] = MDTextField(hint_text="30) ESTADO CIVIL DA ESPOSA ANTES DO CASAMENTO ATUAL", mode="fill", size_hint_y=None, height=dp(48))
-        self.add_widget(self.fields["estado_civil_antes_candidato"])
-        self.add_widget(self.fields["estado_civil_antes_esposa"])
+        self.add_widget(FieldRow("29) ESTADO CIVIL DO CANDIDATO ANTES DO CASAMENTO ATUAL", self.fields["estado_civil_antes_candidato"]))
+        self.add_widget(FieldRow("30) ESTADO CIVIL DA ESPOSA ANTES DO CASAMENTO ATUAL", self.fields["estado_civil_antes_esposa"]))
 
-        row_filhos = MDBoxLayout(size_hint_y=None, height=dp(80), spacing=dp(12))
+        # size_hint_y=None + bind(minimum_height=...) em vez de uma altura
+        # fixa: os dois FieldRow dentro da linha têm altura dinâmica (o
+        # rótulo pode quebrar em mais de uma linha), e uma altura fixa
+        # cortava o conteúdo sempre que isso acontecia.
+        row_filhos = MDBoxLayout(size_hint_y=None, spacing=dp(12))
+        row_filhos.bind(minimum_height=row_filhos.setter("height"))
         self.fields["quantos_filhos"] = MDTextField(hint_text="31) QUANTOS FILHOS TEM?", mode="fill", input_filter="int")
         self.fields["quantos_membros_igreja"] = MDTextField(hint_text="QUANTOS SÃO MEMBROS IGREJA?", mode="fill", input_filter="int")
-        row_filhos.add_widget(self.fields["quantos_filhos"])
-        row_filhos.add_widget(self.fields["quantos_membros_igreja"])
+        row_filhos.add_widget(FieldRow("31) QUANTOS FILHOS TEM?", self.fields["quantos_filhos"]))
+        row_filhos.add_widget(FieldRow("QUANTOS SÃO MEMBROS IGREJA?", self.fields["quantos_membros_igreja"]))
         self.add_widget(row_filhos)
 
         self.fields["filhos_motivo_sem"] = MDTextField(hint_text="32) CASO NÃO TENHA FILHOS, QUAL MOTIVO?", mode="fill", size_hint_y=None, height=dp(48))
-        self.add_widget(self.fields["filhos_motivo_sem"])
+        self.add_widget(FieldRow("32) CASO NÃO TENHA FILHOS, QUAL MOTIVO?", self.fields["filhos_motivo_sem"]))
 
         # ── 33-41: Formação e prática ──────────────────────
         self.add_widget(SectionTitle("FORMAÇÃO E PRÁTICA"))
@@ -259,7 +245,7 @@ class VidaEspiritualContent(MDBoxLayout):
         self._add_check("33) DISPOSTO A DESEMPENHAR MINISTÉRIO VOLUNTÁRIO?", "disposto_ministerio_voluntario")
         self._add_check("34) LEU TODA A BÍBLIA?", "leu_toda_biblia")
         self.fields["livros_lidos"] = MDTextField(hint_text="CASO NÃO TENHA LIDO, QUANTOS LIVROS LEU?", mode="fill", input_filter="int", size_hint_y=None, height=dp(48))
-        self.add_widget(self.fields["livros_lidos"])
+        self.add_widget(FieldRow("CASO NÃO TENHA LIDO, QUANTOS LIVROS LEU?", self.fields["livros_lidos"]))
 
         self._add_check("35) COLOCA EM PRÁTICA ENSINOS DO SATÉLITE E EBD?", "pratica_ensinos_satelite")
         self._add_check("36) APLICA OS ASSUNTOS DO SATÉLITE NA IGREJA?", "aplica_satelite_igreja")
@@ -271,12 +257,14 @@ class VidaEspiritualContent(MDBoxLayout):
         self._add_check_sim_nao("39) ESTUDA NOITE?", "estuda_noite")
         self._add_check("40) DISPOSTO A REALIZAR VIAGEM?", "disposto_viagem")
         self.fields["contribuicoes_ebd_mes"] = MDTextField(hint_text="41) ENVIA QUANTAS CONTRIBUIÇÕES DA EBD POR MÊS?", mode="fill", input_filter="int", size_hint_y=None, height=dp(48))
-        self.add_widget(self.fields["frequencia_media_igreja"])
-        self.add_widget(self.fields["contribuicoes_ebd_mes"])
+        self.add_widget(FieldRow("38) FREQUÊNCIA MÉDIA DA SUA IGREJA:", self.fields["frequencia_media_igreja"]))
+        self.add_widget(FieldRow("41) ENVIA QUANTAS CONTRIBUIÇÕES DA EBD POR MÊS?", self.fields["contribuicoes_ebd_mes"]))
 
     def _add_check(self, text, key):
         cb = MDCheckbox(active=False, size_hint_x=None, width=dp(48))
         self.checks[key] = cb
+        self.checks_touched[key] = False
+        cb.bind(active=lambda *_a, k=key: self.checks_touched.__setitem__(k, True))
         self.add_widget(CheckRow(text, cb))
 
     def _add_check_sim_nao(self, text, key):
@@ -306,6 +294,13 @@ class VidaEspiritualContent(MDBoxLayout):
         d = {k: v.text for k, v in self.fields.items()}
         for k, dd in self.dropdowns.items():
             d[k] = dd.get_value()
+        # Checkbox de pergunta Sim/Não não tocado vira None (não preenchido),
+        # em vez de False, para o PDF não exibir "Não" sem o usuário responder.
+        # Chips de seleção múltipla (maanaim/dons) e pares Sim/Não mutuamente
+        # exclusivos não entram em checks_touched e mantêm o valor bruto.
         for k, cb in self.checks.items():
-            d[k] = cb.active
+            if k in self.checks_touched:
+                d[k] = cb.active if self.checks_touched[k] else None
+            else:
+                d[k] = cb.active
         return d

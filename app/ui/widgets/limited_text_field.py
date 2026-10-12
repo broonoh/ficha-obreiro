@@ -29,7 +29,9 @@ class LimitedTextField(MDBoxLayout):
         self._label_text = label_text
         self._hint_text = hint_text
 
-        # Label do campo (título)
+        # Label do campo (título) — altura dinâmica: várias perguntas
+        # (ex.: no Questionário da Esposa) são frases longas que quebram
+        # em 2-4 linhas; uma altura fixa cortava o texto.
         self.title_label = MDLabel(
             text=label_text,
             font_style="Caption",
@@ -39,9 +41,11 @@ class LimitedTextField(MDBoxLayout):
             height=dp(22),
             bold=True,
         )
+        self.title_label.bind(width=self._resize_label, texture_size=self._resize_label)
         self.add_widget(self.title_label)
 
         # Container: campo + contador
+        self._row_height = dp(160)
         row = MDBoxLayout(
             orientation="vertical",
             size_hint_y=None,
@@ -91,6 +95,20 @@ class LimitedTextField(MDBoxLayout):
         row.add_widget(self.counter_label)
 
         self.add_widget(row)
+
+    def _resize_label(self, *_args):
+        if self.title_label.width <= 0:
+            return
+        self.title_label.text_size = (self.title_label.width, None)
+        self.title_label.texture_update()
+        self.title_label.height = max(dp(22), self.title_label.texture_size[1])
+        self.height = (
+            self.padding[1]
+            + self.title_label.height
+            + self.spacing
+            + self._row_height
+            + self.padding[3]
+        )
 
     def _on_text_changed(self, instance, value):
         """Atualiza contador e limita caracteres em tempo real."""
