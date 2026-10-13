@@ -4,536 +4,469 @@
 <meta charset="utf-8">
 <style>
   :root {
-    --navy: #03223f;
-    --navy-light: #0b3a63;
-    --red: #b41926;
-    --gold: #c89116;
-    --paper: #f7f5f0;
-    --ink: #1c2b3a;
-    --muted: #6b7585;
-    --border: #dde3ea;
-    --card: #ffffff;
-    --yes-bg: #e4f6ed; --yes-fg: #0d7a44;
-    --no-bg: #fdeaea;  --no-fg: #ad2a2a;
-    --empty-bg: #eef1f4; --empty-fg: #8993a3;
+    --verde-escuro: #00b050;
+    --verde-medio: #60e660;
+    --verde-claro: #66ff66;
+    --preto: #000000;
   }
 
   @page {
     size: A4;
-    margin: 15mm 14mm 16mm 14mm;
-    @bottom-left {
-      content: "Igreja Cristã Maranata — Ficha de Obreiro";
-      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-      font-size: 7.5px; color: #8993a3; letter-spacing: .2px;
-    }
-    @bottom-right {
-      content: "Página " counter(page) " de " counter(pages);
-      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-      font-size: 7.5px; color: #8993a3;
-    }
+    margin: 8mm;
   }
 
   * { box-sizing: border-box; }
   html, body { margin: 0; padding: 0; }
   body {
-    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-    color: var(--ink); font-size: 10.3px; line-height: 1.45;
+    font-family: Calibri, 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    color: #000; font-size: 9px; line-height: 1.25;
     background: #fff;
   }
 
-  /* ── Capa / cabeçalho institucional ─────────────────────── */
-  .cover {
-    background: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 100%);
-    color: #fff; border-radius: 10px;
-    padding: 18px 22px; margin-bottom: 16px;
-    display: flex; align-items: center; justify-content: space-between; gap: 16px;
-  }
-  .cover .brand small {
-    display: block; text-transform: uppercase; letter-spacing: 2px;
-    font-size: 8px; color: #b9c7da; margin-bottom: 3px;
-  }
-  .cover .brand h1 { margin: 0; font-size: 18px; font-weight: 700; letter-spacing: .3px; }
-  .cover .brand .subtitle { margin-top: 4px; font-size: 10px; color: #cdd9e8; }
-  .cover .meta { text-align: right; flex-shrink: 0; }
-  .cover .badge {
-    display: inline-block; background: var(--red); color: #fff;
-    padding: 5px 14px; border-radius: 999px;
-    font-weight: 700; font-size: 11px; letter-spacing: .3px;
-  }
-  .cover .meta .date { margin-top: 6px; font-size: 8.5px; color: #cdd9e8; }
+  .pagina { page-break-after: always; border: 2px solid #000; overflow: hidden; }
+  .pagina:last-child { page-break-after: auto; }
 
-  .identity {
-    display: flex; gap: 16px; align-items: stretch;
-    background: var(--card); border: 1px solid var(--border); border-radius: 10px;
-    padding: 14px; margin-bottom: 18px;
+  /* ── Cabeçalho da página 1 (sem faixa verde, só o logo) ─────── */
+  .cabecalho-p1 {
+    display: flex; align-items: center; border-bottom: 2px solid #000;
   }
-  .photo-box {
-    width: 86px; height: 112px; flex-shrink: 0;
-    border: 2px solid var(--navy); border-radius: 6px;
-    background: var(--paper);
-    display: flex; align-items: center; justify-content: center;
-    font-size: 8px; color: var(--muted); text-align: center; padding: 4px;
+  .cabecalho-p1 .logo { height: 17mm; flex: 0 0 auto; padding: 1mm 3mm; }
+  .cabecalho-p1 .titulo { flex: 1 1 auto; text-align: left; padding: 1mm 4mm 1mm 4mm; }
+  .cabecalho-p1 .titulo .l1 { font-size: 12px; font-weight: 700; }
+  .cabecalho-p1 .titulo .l2 { font-size: 10.5px; font-weight: 700; margin-top: 1px; }
+  .cabecalho-p1 .titulo .l2 .aviso { font-size: 7px; font-weight: 400; color: #e8261c; }
+
+  /* ── Cabeçalho verde (páginas 2-6) ───────────────────────────── */
+  .cabecalho-verde {
+    display: flex; align-items: center; background: var(--verde-escuro);
+    border-bottom: 2px solid #000; min-height: 19mm;
+  }
+  .cabecalho-verde .logo { height: 16mm; flex: 0 0 auto; padding: 1mm 3mm; }
+  .cabecalho-verde .titulo { flex: 1 1 auto; color: #fff; font-size: 13px; font-weight: 700; text-align: center; padding-right: 4mm; }
+  .cabecalho-verde .titulo div { margin-top: 2px; font-size: 9.5px; }
+  .campo-nome-topo {
+    border-bottom: 2px solid #000; padding: 1.5mm 2mm; font-size: 9.2px; font-weight: 700;
+  }
+  .campo-nome-topo span.valor { font-weight: 400; margin-left: 2mm; }
+
+  /* ── Barra de título de seção (verde médio, página 1) ────────── */
+  .barra-titulo {
+    background: var(--verde-medio); border-top: 2px solid #000; border-bottom: 2px solid #000;
+    text-align: center; font-size: 10.5px; font-weight: 700; padding: 1.2mm 0;
+  }
+
+  /* ── Tabela de Dados Pessoais ─────────────────────────────────── */
+  .dados-pessoais { display: flex; }
+  .dados-pessoais .colunas { flex: 1 1 auto; }
+  .linha-campo { display: flex; border-bottom: 1px solid #000; }
+  .linha-campo:last-child { border-bottom: none; }
+  .celula { display: flex; align-items: baseline; border-right: 1px solid #000; padding: 0.6mm 1.5mm; overflow: hidden; white-space: nowrap; }
+  .celula:last-child { border-right: none; }
+  .celula .rotulo { font-weight: 700; flex: 0 0 auto; margin-right: 1.5mm; white-space: nowrap; }
+  .celula .valor { flex: 1 1 auto; font-weight: 400; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-height: 2.6mm; }
+  .foto-box {
+    flex: 0 0 24mm; border-left: 1px solid #000; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; text-align: center; font-size: 7.5px; font-weight: 700;
     overflow: hidden;
   }
-  .photo-box img { width: 100%; height: 100%; object-fit: cover; }
-  .identity-main { flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 6px; }
-  .identity-main .name { font-size: 16px; font-weight: 700; color: var(--navy); }
-  .identity-chips { display: flex; flex-wrap: wrap; gap: 6px; }
-  .id-chip {
-    background: var(--paper); border: 1px solid var(--border); border-radius: 999px;
-    padding: 3px 10px; font-size: 8.5px; color: var(--ink);
-  }
-  .id-chip b { color: var(--red); font-weight: 700; margin-right: 3px; }
+  .foto-box img { width: 20mm; height: 25mm; object-fit: cover; }
 
-  /* ── Seções ──────────────────────────────────────────────── */
-  section { margin-top: 12px; page-break-inside: avoid; }
-  section h2 {
-    background: var(--navy); color: #fff;
-    padding: 7px 12px; margin: 0;
-    font-size: 10.5px; letter-spacing: .6px; text-transform: uppercase; font-weight: 700;
-    border-radius: 7px 7px 0 0;
-    border-left: 4px solid var(--gold);
-  }
-  .section-body {
-    border: 1px solid var(--border); border-top: none; border-radius: 0 0 7px 7px;
-    padding: 12px; background: var(--card);
+  /* ── Vida Espiritual: duas colunas ────────────────────────────── */
+  .duas-colunas { display: flex; align-items: flex-start; }
+  .duas-colunas > .coluna { flex: 0 0 50%; min-width: 0; }
+  .duas-colunas > .coluna.esquerda { border-right: 2px solid #000; }
+
+  .sub-header {
+    background: var(--verde-claro); border-bottom: 2px solid #000;
+    text-align: center; font-size: 9.7px; font-weight: 700; padding: 1.3mm 2mm;
   }
 
-  /* Flexbox em vez de CSS Grid: o WeasyPrint tem um bug real de
-     posicionamento ao misturar itens "span" (full) com grid-auto-flow,
-     que embaralha a ordem dos campos. E com flex-grow:1 o WeasyPrint
-     calcula o espaço errado e quebra 3 colunas em 2 — por isso
-     "flex: 0 0 X%" (sem crescer) em vez de "flex: 1 1 X%". */
-  .grid { display: flex; flex-wrap: wrap; gap: 7px 10px; }
-  .grid > .field { flex: 0 0 28%; min-width: 0; }
-  .grid-2 > .field { flex: 0 0 42%; }
-  .grid-4 > .field { flex: 0 0 19%; }
-  .full { flex-basis: 100% !important; }
+  .item {
+    display: flex; border-bottom: 1px solid #000; padding: 0.25mm 1.5mm; align-items: baseline;
+  }
+  .item .texto { flex: 1 1 auto; font-weight: 600; padding-right: 1.5mm; }
+  .item .resp { flex: 0 0 auto; min-width: 11mm; max-width: 40%;
+    text-align: right; font-weight: 400; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .item.indent .texto { padding-left: 4mm; }
+  .item.full .resp { flex: 1 1 auto; max-width: none; text-align: left; margin-left: 1.5mm; }
 
-  .field {
-    background: var(--paper); border: 1px solid var(--border); border-radius: 5px;
-    padding: 5px 9px;
-  }
-  .field .k {
-    font-size: 7.8px; color: var(--red); text-transform: uppercase;
-    letter-spacing: .3px; font-weight: 700; margin-bottom: 2px;
-  }
-  .field .v {
-    font-size: 10px; color: var(--ink); word-break: break-word; min-height: 12px;
-  }
-  .field .v.muted { color: #b3bac4; }
-  .field .v .detail { display: block; margin-top: 3px; font-size: 9.3px; color: var(--muted); font-weight: 400; }
+  .item-par { display: flex; border-bottom: 1px solid #000; }
+  .item-par .meio { flex: 1 1 auto; display: flex; align-items: baseline; padding: 0.25mm 1.5mm; border-right: 1px solid #000; }
+  .item-par .meio:last-child { border-right: none; }
+  .item-par .meio .texto { flex: 0 0 auto; font-weight: 600; margin-right: 1.5mm; }
+  .item-par .meio .resp { flex: 1 1 auto; text-align: left; min-height: 2mm; }
 
-  .sub-section {
-    color: var(--red); font-size: 9.5px; margin: 12px 0 6px 0;
-    text-transform: uppercase; font-weight: 700; letter-spacing: .4px;
-    padding-bottom: 3px; border-bottom: 1.5px solid #f0d9db;
-  }
-  .sub-section:first-child { margin-top: 0; }
-
-  .check {
-    display: inline-block; padding: 2px 8px; border-radius: 999px;
-    font-size: 8.8px; font-weight: 700;
-  }
-  .check-yes   { background: var(--yes-bg);   color: var(--yes-fg); }
-  .check-no    { background: var(--no-bg);    color: var(--no-fg); }
-  .check-empty { background: var(--empty-bg); color: var(--empty-fg); font-weight: 600; }
-
-  .textarea-v {
-    white-space: pre-wrap; min-height: 46px;
-    background: var(--paper); border: 1px solid var(--border); border-radius: 5px;
-    padding: 7px 9px; font-size: 9.8px;
+  .assinatura-rodape {
+    border-top: 2px solid #000; text-align: center; font-size: 7.3px; font-weight: 700; padding: 1mm;
   }
 
-  .dons-grid, .maanaim-grid {
-    display: flex; flex-wrap: wrap; gap: 5px; margin-top: 4px;
+  .dom-bloco { }
+  .dom-titulo { background: var(--verde-medio); border-top: 2px solid #000; border-bottom: 1px solid #000; text-align: center; font-size: 7.5px; font-weight: 700; padding: 0.5mm; }
+  .dom-texto { border-bottom: 2px solid #000; padding: 0.5mm 2mm; min-height: 13mm; font-size: 8px; white-space: pre-wrap; }
+  .situacao-linha { display: flex; align-items: center; border-bottom: 2px solid #000; padding: 0.5mm 2mm; font-size: 7.3px; font-weight: 700; }
+  .situacao-linha .rot { margin-right: 1.5mm; }
+  .situacao-opcao { display: inline-flex; align-items: center; margin-right: 2.5mm; }
+  .situacao-opcao .caixa {
+    display: inline-block; width: 2.6mm; height: 2.6mm; border: 1px solid #000;
+    margin-right: 1mm; text-align: center; line-height: 2.4mm; font-size: 2.6mm; background: #fff;
   }
-  .dons-grid .don-chip { flex: 0 0 13.5%; }
-  .maanaim-grid .don-chip { flex: 0 0 28%; }
-  .don-chip {
-    background: var(--paper); border: 1px solid var(--border); border-radius: 999px;
-    padding: 5px 4px; text-align: center; font-size: 8px; font-weight: 600; color: var(--muted);
-  }
-  .don-chip.active { background: var(--navy); color: #fff; border-color: var(--navy); }
+  .situacao-opcao.marcada .caixa { background: var(--verde-claro); }
+  .situacao-opcao.marcada .caixa::after { content: "✓"; }
+  .data-assinatura { display: flex; border-bottom: 2px solid #000; font-size: 7.3px; font-weight: 700; }
+  .data-assinatura > div { flex: 1 1 50%; text-align: center; padding: 0.8mm; }
+  .data-assinatura > div:first-child { border-right: 1px solid #000; }
 
-  .admin-note {
-    font-size: 8.3px; color: var(--muted); font-style: italic; margin-bottom: 8px;
+  /* ── Páginas com blocos de texto grande (2,3,5,6) ─────────────── */
+  .bloco-titulo {
+    background: var(--verde-medio); border-top: 2px solid #000; border-bottom: 2px solid #000;
+    font-size: 10px; font-weight: 700; padding: 1.3mm 2mm; text-align: center;
   }
-  .situacao-box {
-    background: #fdf6e3; border: 1.5px solid var(--gold); border-radius: 7px;
-    padding: 10px 14px; text-align: center;
+  .bloco-texto {
+    border-bottom: 2px solid #000; padding: 2mm; min-height: 38mm; font-size: 9.2px;
+    white-space: pre-wrap;
   }
-  .situacao-box .label { font-size: 8.5px; color: #8a6a0c; text-transform: uppercase; letter-spacing: .4px; font-weight: 700; }
-  .situacao-box .value { font-size: 15px; font-weight: 700; color: #6b4e08; margin-top: 3px; }
+  .pagina-5 .bloco-texto { min-height: 29mm; }
+  .pagina-6 .bloco-texto { min-height: 39mm; }
+  .pagina-3 .bloco-texto { min-height: 65mm; }
 
-  .signature { margin-top: 26px; display: flex; justify-content: space-between; gap: 18px; }
-  .signature div {
-    border-top: 1.5px solid var(--navy); padding-top: 5px; flex: 1;
-    text-align: center; font-size: 8.5px; color: var(--muted);
+  /* ── Página 4: Mensagens ───────────────────────────────────────── */
+  .msg-bloco-titulo {
+    background: var(--verde-medio); border-top: 2px solid #000; border-bottom: 2px solid #000;
+    font-size: 10px; font-weight: 700; padding: 1.3mm 2mm; text-align: center;
   }
-  .signature div b { display: block; color: var(--ink); font-size: 9.5px; margin-bottom: 1px; font-weight: 600; }
+  .msg-linha { border-bottom: 1px dashed #000; padding: 1.5mm 2mm; font-size: 9.2px; font-weight: 700; }
+  .msg-linha span.valor { font-weight: 400; margin-left: 2mm; }
+  .msg-descricao { border-bottom: 2px solid #000; padding: 2mm; min-height: 97mm; font-size: 9.2px; white-space: pre-wrap; }
+
+  /* ── Página 6: perguntas numeradas ────────────────────────────── */
+  .pergunta-titulo {
+    background: var(--verde-claro); border-top: 2px solid #000; border-bottom: 2px solid #000;
+    font-size: 10px; font-weight: 700; padding: 1.3mm 2mm; text-align: center;
+  }
+  .assinatura-esposa { padding: 3mm 2mm; font-size: 9.7px; font-weight: 700; }
+  .assinatura-esposa .linha { border-bottom: 1px solid #000; display: inline-block; min-width: 140mm; margin-left: 2mm; }
+
+  /* ── Chips Sim/Não ────────────────────────────────────────────── */
+  .check { font-weight: 700; }
+  .check-yes { color: #0d7a44; }
+  .check-no { color: #ad2a2a; }
+  .check-empty { color: #8993a3; }
 </style>
 </head>
 <body>
 
-{% macro field(label, value, full=False) -%}
-<div class="field{{ ' full' if full else '' }}"><div class="k">{{ label }}</div><div class="v">{{ v(value) }}</div></div>
+{% macro linha2(l_esq, v_esq, l_dir, v_dir) -%}
+<div class="linha-campo">
+  <div class="celula" style="flex:0 0 46%;"><span class="rotulo">{{ l_esq }}</span><span class="valor">{{ v(v_esq) }}</span></div>
+  <div class="celula" style="flex:1 1 auto;"><span class="rotulo">{{ l_dir }}</span><span class="valor">{{ v(v_dir) }}</span></div>
+</div>
 {%- endmacro %}
 
-{% macro field_html(label, value_html, full=False) -%}
-<div class="field{{ ' full' if full else '' }}"><div class="k">{{ label }}</div><div class="v">{{ value_html }}</div></div>
+{% macro linha3(l1, v1, l2, v2, l3, v3) -%}
+<div class="linha-campo">
+  <div class="celula" style="flex:0 0 46%;"><span class="rotulo">{{ l1 }}</span><span class="valor">{{ v(v1) }}</span></div>
+  <div class="celula" style="flex:0 0 27%;"><span class="rotulo">{{ l2 }}</span><span class="valor">{{ v(v2) }}</span></div>
+  <div class="celula" style="flex:1 1 auto;"><span class="rotulo">{{ l3 }}</span><span class="valor">{{ v(v3) }}</span></div>
+</div>
 {%- endmacro %}
 
-{% macro field_detail(label, check_html, detail_label, detail_value, full=True) -%}
-<div class="field{{ ' full' if full else '' }}">
-  <div class="k">{{ label }}</div>
-  <div class="v">{{ check_html }}{% if detail_value %}<span class="detail">{{ detail_label }}: {{ v(detail_value) }}</span>{% endif %}</div>
+{% macro item(texto, valor, full=False) -%}
+<div class="item{{ ' full' if full else '' }}"><span class="texto">{{ texto }}</span><span class="resp">{{ v(valor) }}</span></div>
+{%- endmacro %}
+
+{% macro item_check(texto, valor) -%}
+<div class="item"><span class="texto">{{ texto }}</span><span class="resp">{{ check(valor) }}</span></div>
+{%- endmacro %}
+
+{% macro item_par(l1, v1, l2, v2) -%}
+<div class="item-par">
+  <div class="meio"><span class="texto">{{ l1 }}</span><span class="resp">{{ v(v1) }}</span></div>
+  <div class="meio"><span class="texto">{{ l2 }}</span><span class="resp">{{ v(v2) }}</span></div>
 </div>
 {%- endmacro %}
 
 {% macro tempo(anos, meses) -%}
-{%- if not anos and not meses -%}—{%- else -%}{{ anos or 0 }}a {{ meses or 0 }}m{%- endif -%}
+{%- if not anos and not meses -%}{%- else -%}{{ anos or 0 }}a {{ meses or 0 }}m{%- endif -%}
 {%- endmacro %}
 
-{% macro vezes_ano(n, ano) -%}
-{%- if n or ano -%}{{ n or '?' }} vez(es) em {{ ano or '?' }}{%- endif -%}
+{% macro situacao_opcoes(valor) -%}
+<div class="situacao-linha">
+  <span class="rot">SITUAÇÃO:</span>
+  <span class="situacao-opcao{{ ' marcada' if valor == 'Aprovado' else '' }}"><span class="caixa"></span>APROVADO</span>
+  <span class="situacao-opcao{{ ' marcada' if valor == 'Não Aprovado' else '' }}"><span class="caixa"></span>NÃO APROVADO</span>
+  <span class="situacao-opcao{{ ' marcada' if valor == 'Rever' else '' }}"><span class="caixa"></span>REVER</span>
+  <span class="situacao-opcao{{ ' marcada' if valor == 'Aguardar' else '' }}"><span class="caixa"></span>AGUARDAR</span>
+</div>
 {%- endmacro %}
 
 <!-- ═══════════════════════════════════════════════════════
-     CAPA / IDENTIFICAÇÃO
+     PÁGINA 1 — DADOS PESSOAIS + VIDA ESPIRITUAL
 ═══════════════════════════════════════════════════════ -->
-<div class="cover">
-  <div class="brand">
-    <small>Igreja Cristã Maranata</small>
-    <h1>Ficha de Obreiro</h1>
-    <div class="subtitle">Formulário de credenciamento e acompanhamento ministerial</div>
+<div class="pagina pagina-1">
+  <div class="cabecalho-p1">
+    <img class="logo" src="{{ logo_base64 }}">
+    <div class="titulo">
+      <div class="l1">IGREJA CRISTÃ MARANATA</div>
+      <div class="l2">FORMULÁRIO DE OBREIROS <span class="aviso">(todos os campos são de preenchimento obrigatório e nenhum item deve ser alterado)</span></div>
+    </div>
   </div>
-  <div class="meta">
-    <span class="badge">Nº {{ v(numero) }}</span>
-    <div class="date">Gerado em {{ gerado_em }}</div>
+
+  <div class="barra-titulo">DADOS PESSOAIS</div>
+  <div class="dados-pessoais">
+    <div class="colunas">
+      {{ linha2("Nome", nome, "Idade", idade) }}
+      {{ linha2("Rua", endereco_rua, "Bairro", endereco_bairro) }}
+      {{ linha3("Cidade", endereco_cidade, "UF", endereco_uf, "CEP", endereco_cep) }}
+      {{ linha2("E-mail", email, "Tel", telefone) }}
+      {{ linha2("Estado Civil", estado_civil, "Data Nascimento", data_nascimento) }}
+      {{ linha3("Carteira de Identidade", rg, "OE", oe_orgao_emissor, "C.P.F.", cpf) }}
+      <div class="linha-campo">
+        <div class="celula" style="flex:0 0 46%;"><span class="rotulo">Empregado</span><span class="valor">{{ v(empregado) }}</span></div>
+        <div class="celula" style="flex:0 0 13%;"><span class="rotulo">Ano(s)</span><span class="valor">{{ v(tempo_emprego_anos) }}</span></div>
+        <div class="celula" style="flex:0 0 13%;"><span class="rotulo">Mês(es)</span><span class="valor">{{ v(tempo_emprego_meses) }}</span></div>
+        <div class="celula" style="flex:1 1 auto;"><span class="rotulo">Profissão</span><span class="valor">{{ v(profissao) }}</span></div>
+      </div>
+      {{ linha2("Se Militar: Qual Patente", militar_patente, "Arma", arma) }}
+      {{ linha2("Se aposentado (motivo aposentadoria)", aposentado_motivo, "Empresa", empresa) }}
+      {{ linha3("Escolaridade", escolaridade, "Data de Preenchimento", data_preenchimento, "Nº", numero) }}
+    </div>
+    <div class="foto-box">
+      {% if foto_base64 %}<img src="{{ foto_base64 }}">{% else %}Foto<br>(terno e gravata)<br>3 X 4{% endif %}
+    </div>
+  </div>
+
+  <div class="barra-titulo">VIDA ESPIRITUAL</div>
+  <div class="duas-colunas">
+    <div class="coluna esquerda">
+      <div class="sub-header">ÁREA RESERVADA AO PREENCHIMENTO DO &quot;OBREIRO&quot; APRESENTADO</div>
+
+      {{ item('01) FUNÇÃO ATUAL: EVANGELISTA, OBREIRO, DIÁCONO OU UNGIDO?', funcao_atual) }}
+      {{ item_par('02) TEMPO NA FUNÇÃO? ANO(S)', tempo_funcao_anos, 'MÊS(ES)', tempo_funcao_meses) }}
+      {{ item_check('03) GRUPO DE INTERCESSÃO?', grupo_intercessao) }}
+      {{ item_check('04) É RESPONSÁVEL POR TRABALHO/IGREJA?', responsavel_trabalho) }}
+      {{ item('    SE SIM, QUAL?', responsavel_trabalho_qual, full=True) }}
+      {{ item('05) CRESCIMENTO (OU NÃO) DE SEU GRUPO ASSISTÊNCIA OU IGREJA (%)', crescimento_grupo_pct) }}
+      {{ item('06) FAZ QUANTAS VISITAS POR MÊS AOS IRMÃOS DA IGREJA?', visitas_mes) }}
+      {{ item_check('07) É DIZIMISTA FIEL?', dizimista_fiel) }}
+      {{ item_par('08) TEMPO NA ICM? ANO(S)', tempo_icm_anos, 'MÊS(ES)', tempo_icm_meses) }}
+      {{ item_check('09) JÁ AFASTOU-SE DA IGREJA POR ALGUM MOTIVO?', afastou_igreja) }}
+      {{ item('    MOTIVO', afastou_igreja_motivo, full=True) }}
+      {{ item_par('    DATA', afastou_data1, 'DATA', afastou_data2) }}
+      {{ item('    DATA', afastou_data3) }}
+      {{ item_check('10) FOI PROVADO? (FOLHA ANEXA)', foi_provado) }}
+      {{ item('    QUAIS?', foi_provado_qual, full=True) }}
+      {{ item_check('11) TEM EXPERIÊNCIA? (FOLHA ANEXA)', tem_experiencia) }}
+      {{ item('12) TEM SEQÜELAS DO PASSADO?', tem_sequelas_passado, full=True) }}
+      {{ item_par('13) 1º SEMINÁRIO', ultimo_seminario1, '2º SEMINÁRIO', ultimo_seminario2) }}
+      {{ item('    3º SEMINÁRIO', ultimo_seminario3) }}
+      {{ item('14) PARTICIPAÇÃO NO MAANAIM/IGREJA',
+        (('Voluntário' if participa_maanaim_voluntario else ''), ('Meio Semana' if participa_maanaim_meio_semana else ''), ('Final de Semana' if participa_maanaim_final_semana else '')) | select | join(', '), full=True) }}
+      {{ item_check('15) PARTICIPA DOS CULTOS DE MADRUGADA?', participa_madrugada) }}
+      {{ item_check('16) É INTEGRADO AO CULTO PROFÉTICO?', integrado_culto_profetico) }}
+      {{ item_check('17) TEM GOVERNO NO LAR E NA IGREJA?', tem_governo_lar) }}
+      {{ item_check('18) A FAMÍLIA É INTEGRADA NA ICM?', familia_integrada) }}
+      {{ item_check('19) RESPEITA O PASTOR E AO PRESBITÉRIO?', respeita_pastor_presbiterio) }}
+      {{ item_check('20) É ZELOSO COM OS BENS DA ICM?', zelo_bens_icm) }}
+      {{ item('21) É USADO NOS DONS: LÍNGUAS, INTERPR., CIÊNCIA, SONHO, VISÃO, REVELAÇÃO?',
+        (('Línguas' if dons_linguas else ''), ('Interpretação' if dons_interpretacao else ''), ('Ciência' if dons_ciencia else ''), ('Sonho' if dons_sonho else ''), ('Visão' if dons_visao else ''), ('Revelação' if dons_revelacao else ''), ('Não' if dons_nenhum else '')) | select | join(', '), full=True) }}
+      {{ item('22) VEIO DE OUTRA IGREJA (DENOMINAÇÃO)? QUAL?', veio_outra_igreja, full=True) }}
+      {{ item_check('23) É CUMPRIDOR DE SUAS OBRIGAÇÕES NO SEU TRABALHO?', cumpridor_obrigacoes) }}
+      {{ item_check('24) TEM DÍVIDA COM IRMÃOS DA IGREJA?', divida_irmaos) }}
+      {{ item('25) TEMPO DE CASADO (ANOS)', tempo_casado) }}
+      {{ item('26) NOME DA ESPOSA:', nome_esposa, full=True) }}
+      {{ item('27) FUNÇÃO DA ESPOSA NA IGREJA:', funcao_esposa, full=True) }}
+      {{ item('28) PROFISSÃO DA ESPOSA', profissao_esposa, full=True) }}
+      {{ item('29) ESTADO CIVIL DO CANDIDATO ANTES DO CASAMENTO', estado_civil_antes_candidato) }}
+      {{ item('30) ESTADO CIVIL DA ESPOSA ANTES DO CASAMENTO', estado_civil_antes_esposa) }}
+      {{ item_par('31) QUANTOS FILHOS TEM?', quantos_filhos, 'MEMBROS IGREJA?', quantos_membros_igreja) }}
+      {{ item('32) CASO NÃO TENHA FILHOS, QUAL MOTIVO?', filhos_motivo_sem, full=True) }}
+      {{ item_check('33) DISPOSTO A DESEMPENHAR MINISTÉRIO VOLUNTÁRIO?', disposto_ministerio_voluntario) }}
+      {{ item_check('34) LEU TODA A BÍBLIA?', leu_toda_biblia) }}
+      {{ item('    CASO NÃO TENHA LIDO, QUANTOS LIVROS LEU?', livros_lidos, full=True) }}
+      {{ item_check('35) COLOCA EM PRÁTICA ENSINOS DO SATÉLITE E EBD?', pratica_ensinos_satelite) }}
+      {{ item_check('36) APLICA OS ASSUNTOS DO SATÉLITE NA IGREJA?', aplica_satelite_igreja) }}
+      {{ item_check('37) CONCLUIU O CURSO DO INSTITUTO BÍBLICO?', concluiu_instituto_biblico) }}
+      {{ item('    QUAL CURSO?', curso_realizado) }}
+      {{ item('38) FREQUÊNCIA MÉDIA DA SUA IGREJA:', frequencia_media_igreja) }}
+      {{ item('39) ESTUDA NOITE? SIM / NÃO?', sim_nao(estuda_noite_sim, estuda_noite_nao), full=True) }}
+      {{ item_check('40) DISPOSTO A REALIZAR VIAGEM?', disposto_viagem) }}
+      {{ item('41) ENVIA QUANTAS CONTRIBUIÇÕES DA EBD POR MÊS?', contribuicoes_ebd_mes, full=True) }}
+
+      <div class="assinatura-rodape">ASSINATURA DO &quot;OBREIRO&quot; (INDISPENSÁVEL)</div>
+    </div>
+
+    <div class="coluna">
+      <div class="sub-header">ÁREA RESERVADA AO PREENCHIMENTO DO PASTOR RESPONSÁVEL<br>(INFORMAÇÕES SOBRE O CANDIDATO)</div>
+
+      {{ item('01) FUNÇÃO A SER APRESENTADO', funcao_apresentada) }}
+      {{ item('02) CARACTERÍSTICA DO MINISTÉRIO', caracteristica_ministerio, full=True) }}
+      {{ item_check('03) TEM MENSAGEM REVELADA? (FOLHA ANEXA)', tem_mensagem_revelada) }}
+      {{ item_check('04) TRANSMITE BEM A MENSAGEM?', transmite_bem_mensagem) }}
+      {{ item('05) DEFEITO (TÍMIDO/AFOITO/LENTO/RÍGIDO, ETC)', defeito, full=True) }}
+      {{ item_check('06) TEM BOM TESTEMUNHO?', tem_bom_testemunho) }}
+      {{ item_check('07) TEM MATURIDADE NOS DONS?', maturidade_dons) }}
+      {{ item_check('08) GOSTA DE IMITAR MOVIMENTOS?', gosta_imitar_movimentos) }}
+      {{ item_check('09) É GASTADOR?', e_gastador) }}
+      {{ item_check('10) É DADO A COMENTÁRIOS DEPRECIATIVOS?', dado_comentarios_depreciativos) }}
+      {{ item('    QUAIS?', comentarios_depreciativos_quais, full=True) }}
+      {{ item_check('11) É PONTUAL?', pontual) }}
+      {{ item_check('12) É SÓBRIO NO VESTIR?', sobrio_vestir) }}
+      {{ item('13) NÚMERO DE IGREJAS NO BAIRRO OU CIDADE?', numero_igrejas_bairro) }}
+      {{ item('14) NÚMERO DE PASTORES NO BAIRRO OU CIDADE?', numero_pastores_bairro) }}
+      {{ item_check('15) OBEDIENTE AOS DONS RELACIONADOS À SUA VIDA OU FAMÍLIA?', obediente_dons) }}
+      {{ item('    OUTRA(S)? QUAIS?', obediente_dons_quais, full=True) }}
+      {{ item_check('16) JÁ FOI APRESENTADO ALGUMA VEZ PARA ESTA FUNÇÃO?', ja_apresentado_antes) }}
+      {{ item_par('    SE SIM, QUANTAS?', quantas_vezes_apresentado, 'ANO?', ano_apresentacao) }}
+      {{ item('    CASO NÃO TENHA SIDO APROVADO, FAVOR INFORMAR O MOTIVO:', motivo_nao_aprovado, full=True) }}
+      {{ item('17) QUAL IGREJA O CANDIDATO IRÁ ASSUMIR EM CASO DE ORDENAÇÃO?', igreja_assumira, full=True) }}
+      {{ item('OBSERVAÇÃO DO PASTOR RESPONSÁVEL / DOM DA IGREJA:', observacao_pastor, full=True) }}
+
+      {{ item('IGREJA', pastor_igreja, full=True) }}
+      {{ item_par('CIDADE', pastor_cidade, 'UF', pastor_uf) }}
+
+      <div class="assinatura-rodape">ASSINATURA DO PASTOR RESPONSÁVEL (INDISPENSÁVEL)<br>{{ v(assinatura_pastor) if assinatura_pastor else '' }}</div>
+
+      <div class="dom-bloco">
+        <div class="dom-titulo">DOM NA COMISSÃO DA ÁREA / PÓLO - 1 dom resumido</div>
+        <div class="dom-texto">{{ v(dom_comissao_area) }}</div>
+        {{ situacao_opcoes(situacao_area) }}
+      </div>
+
+      <div class="dom-bloco">
+        <div class="dom-titulo">DOM NA COMISSÃO DA REGIÃO / COORDENADORES - 1 dom resumido</div>
+        <div class="dom-texto">{{ v(dom_comissao_regiao) }}</div>
+        {{ situacao_opcoes(situacao_regiao) }}
+      </div>
+
+      <div class="dom-bloco">
+        <div class="dom-titulo">CONSELHO PRESBITERAL</div>
+        <div class="dom-texto">{{ v(dom_conselho_presbiteral) }}</div>
+        {{ situacao_opcoes(situacao_presbiterial) }}
+        <div class="data-assinatura">
+          <div>DATA<br>{{ v(data_conselho_presbiteral) }}</div>
+          <div>ASSINATURA</div>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 
-<div class="identity">
-  <div class="photo-box">
-    {% if foto_base64 %}
-      <img src="{{ foto_base64 }}">
-    {% else %}
-      Foto 3x4<br>(terno e gravata)
-    {% endif %}
+<!-- ═══════════════════════════════════════════════════════
+     PÁGINA 2 — EXPERIÊNCIAS COM RECURSOS DA GRAÇA
+═══════════════════════════════════════════════════════ -->
+<div class="pagina pagina-2">
+  <div class="cabecalho-verde">
+    <img class="logo" src="{{ logo_base64 }}">
+    <div class="titulo">EXPERIÊNCIAS COM RECURSOS DA GRAÇA (MEIOS DE GRAÇA)</div>
   </div>
-  <div class="identity-main">
-    <div class="name">{{ v(nome) }}</div>
-    <div class="identity-chips">
-      <span class="id-chip"><b>Função</b>{{ v(funcao_atual) }}</span>
-      <span class="id-chip"><b>Idade</b>{{ v(idade) }}</span>
-      <span class="id-chip"><b>Nascimento</b>{{ v(data_nascimento) }}</span>
-      <span class="id-chip"><b>Estado Civil</b>{{ v(estado_civil) }}</span>
-      <span class="id-chip"><b>Profissão</b>{{ v(profissao) }}</span>
-      <span class="id-chip"><b>Preenchido em</b>{{ v(data_preenchimento) }}</span>
-    </div>
-  </div>
+  <div class="campo-nome-topo">NOME: <span class="valor">{{ v(nome) }}</span></div>
+
+  <div class="bloco-titulo">EXPERIÊNCIA COM CLAMOR PELO SANGUE DE JESUS / ORAÇÃO</div>
+  <div class="bloco-texto">{{ v(experiencia_clamor) }}</div>
+
+  <div class="bloco-titulo">EXPERIÊNCIA COM JEJUM</div>
+  <div class="bloco-texto">{{ v(experiencia_jejum) }}</div>
+
+  <div class="bloco-titulo">EXPERIÊNCIA COM MADRUGADA</div>
+  <div class="bloco-texto">{{ v(experiencia_madrugada) }}</div>
+
+  <div class="bloco-titulo">EXPERIÊNCIA COM CONSULTA A PALAVRA OU A PALAVRA</div>
+  <div class="bloco-texto">{{ v(experiencia_palavra) }}</div>
+
+  <div class="bloco-titulo">EXPERIÊNCIA COM LOUVOR</div>
+  <div class="bloco-texto">{{ v(experiencia_louvor) }}</div>
 </div>
 
 <!-- ═══════════════════════════════════════════════════════
-     DADOS PESSOAIS
+     PÁGINA 3 — EXPERIÊNCIAS DO OBREIRO 2
 ═══════════════════════════════════════════════════════ -->
-<section>
-  <h2>Dados Pessoais</h2>
-  <div class="section-body">
-    <div class="sub-section">Informações Pessoais</div>
-    <div class="grid">
-      {{ field("Escolaridade", escolaridade) }}
-      {{ field("Estado Civil", estado_civil) }}
-      {{ field("Idade", idade) }}
-    </div>
-
-    <div class="sub-section">Endereço e Contato</div>
-    <div class="grid">
-      {{ field("Rua", endereco_rua, full=True) }}
-      {{ field("Bairro", endereco_bairro) }}
-      {{ field("Cidade", endereco_cidade) }}
-      {{ field("UF", endereco_uf) }}
-      {{ field("CEP", endereco_cep) }}
-      {{ field("E-mail", email) }}
-      {{ field("Telefone", telefone) }}
-    </div>
-
-    <div class="sub-section">Documentação e Dados Profissionais</div>
-    <div class="grid">
-      {{ field("Carteira de Identidade", rg) }}
-      {{ field("OE (Órgão Emissor)", oe_orgao_emissor) }}
-      {{ field("C.P.F.", cpf) }}
-      {{ field("Empregado", empregado) }}
-      {{ field_html("Tempo de Emprego", tempo(tempo_emprego_anos, tempo_emprego_meses)) }}
-      {{ field("Empresa", empresa) }}
-    </div>
-
-    <div class="sub-section">Dados Militares e Aposentadoria</div>
-    <div class="grid">
-      {{ field("Se Militar — Qual Patente", militar_patente) }}
-      {{ field("Arma", arma) }}
-      {{ field("Se Aposentado (motivo)", aposentado_motivo) }}
-    </div>
+<div class="pagina pagina-3">
+  <div class="cabecalho-verde">
+    <img class="logo" src="{{ logo_base64 }}">
+    <div class="titulo">EXPERIÊNCIAS DO OBREIRO 2</div>
   </div>
-</section>
+  <div class="campo-nome-topo">NOME: <span class="valor">{{ v(nome) }}</span></div>
+
+  <div class="bloco-titulo">DONS (ENTREGUES PELO OBREIRO) QUE SE CUMPRIRAM</div>
+  <div class="bloco-texto">{{ v(dons_cumpridos) }}</div>
+
+  <div class="bloco-titulo">PROVAS VIVIDAS PELO OBREIRO</div>
+  <div class="bloco-texto">{{ v(provas_vividas) }}</div>
+
+  <div class="bloco-titulo">EXPERIÊNCIAS VIVIDAS PELO OBREIRO</div>
+  <div class="bloco-texto">{{ v(experiencias_vividas) }}</div>
+</div>
 
 <!-- ═══════════════════════════════════════════════════════
-     VIDA ESPIRITUAL
+     PÁGINA 4 — MENSAGENS REVELADAS
 ═══════════════════════════════════════════════════════ -->
-<section>
-  <h2>Vida Espiritual</h2>
-  <div class="section-body">
-
-    <div class="sub-section">Função e Tempo</div>
-    <div class="grid">
-      {{ field("01) Função Atual", funcao_atual) }}
-      {{ field_html("02) Tempo na Função", tempo(tempo_funcao_anos, tempo_funcao_meses)) }}
-      {{ field_html("08) Tempo na ICM", tempo(tempo_icm_anos, tempo_icm_meses)) }}
-    </div>
-
-    <div class="sub-section">Ministério e Serviço</div>
-    <div class="grid">
-      {{ field_html("03) Grupo de Intercessão?", check(grupo_intercessao)) }}
-      {{ field_detail("04) Responsável por trabalho/igreja?", check(responsavel_trabalho), "Qual", responsavel_trabalho_qual) }}
-      {{ field("05) Crescimento do grupo (%)", crescimento_grupo_pct) }}
-      {{ field("06) Visitas/mês aos irmãos", visitas_mes) }}
-      {{ field_html("07) Dizimista Fiel?", check(dizimista_fiel)) }}
-    </div>
-
-    <div class="sub-section">Tempo na ICM e Histórico</div>
-    <div class="grid">
-      {{ field_detail("09) Já afastou-se da igreja?", check(afastou_igreja), "Motivo", afastou_igreja_motivo) }}
-      {{ field("Datas do afastamento", [afastou_data1, afastou_data2, afastou_data3] | select | join(" · ")) }}
-      {{ field_detail("10) Foi provado? (folha anexa)", check(foi_provado), "Quais", foi_provado_qual) }}
-      {{ field_html("11) Tem experiência? (folha anexa)", check(tem_experiencia)) }}
-      {{ field_html("12) Tem sequelas do passado?", check(tem_sequelas_passado)) }}
-      {{ field("13) Últimos Seminários", [ultimo_seminario1, ultimo_seminario2, ultimo_seminario3] | select | join(" · ")) }}
-    </div>
-
-    <div class="sub-section">14) Participação no Maanaim/Igreja</div>
-    <div class="maanaim-grid">
-      <div class="don-chip {{ 'active' if participa_maanaim_voluntario }}">Voluntário</div>
-      <div class="don-chip {{ 'active' if participa_maanaim_meio_semana }}">Meio Semana</div>
-      <div class="don-chip {{ 'active' if participa_maanaim_final_semana }}">Final de Semana</div>
-    </div>
-
-    <div class="sub-section">Vida Devocional e Caráter</div>
-    <div class="grid">
-      {{ field_html("15) Participa dos cultos de madrugada?", check(participa_madrugada)) }}
-      {{ field_html("16) É integrado ao culto profético?", check(integrado_culto_profetico)) }}
-      {{ field_html("17) Tem governo no lar e na igreja?", check(tem_governo_lar)) }}
-      {{ field_html("18) A família é integrada na ICM?", check(familia_integrada)) }}
-      {{ field_html("19) Respeita o pastor e o presbitério?", check(respeita_pastor_presbiterio)) }}
-      {{ field_html("20) É zeloso com os bens da ICM?", check(zelo_bens_icm)) }}
-    </div>
-
-    <div class="sub-section">21) Dons Espirituais</div>
-    <div class="dons-grid">
-      <div class="don-chip {{ 'active' if dons_linguas }}">Línguas</div>
-      <div class="don-chip {{ 'active' if dons_interpretacao }}">Interpretação</div>
-      <div class="don-chip {{ 'active' if dons_ciencia }}">Ciência</div>
-      <div class="don-chip {{ 'active' if dons_sonho }}">Sonho</div>
-      <div class="don-chip {{ 'active' if dons_visao }}">Visão</div>
-      <div class="don-chip {{ 'active' if dons_revelacao }}">Revelação</div>
-    </div>
-
-    <div class="sub-section">Histórico</div>
-    <div class="grid">
-      {{ field_html("22) Veio de outra igreja? Qual?", check(veio_outra_igreja), full=True) }}
-      {{ field_html("23) É cumpridor de suas obrigações?", check(cumpridor_obrigacoes)) }}
-      {{ field_html("24) Tem dívida com irmãos da igreja?", check(divida_irmaos)) }}
-    </div>
-
-    <div class="sub-section">Família</div>
-    <div class="grid">
-      {{ field("25) Tempo de Casado", tempo_casado) }}
-      {{ field("26) Nome da Esposa", nome_esposa) }}
-      {{ field("27) Função da Esposa", funcao_esposa) }}
-      {{ field("28) Profissão da Esposa", profissao_esposa) }}
-      {{ field("29) Estado Civil Antes — Candidato", estado_civil_antes_candidato) }}
-      {{ field("30) Estado Civil Antes — Esposa", estado_civil_antes_esposa) }}
-      {{ field("31) Quantos Filhos", quantos_filhos) }}
-      {{ field("Membros da família na igreja", quantos_membros_igreja) }}
-      {{ field("32) Caso não tenha filhos, motivo", filhos_motivo_sem, full=True) }}
-    </div>
-
-    <div class="sub-section">Formação e Prática</div>
-    <div class="grid">
-      {{ field_html("33) Disposto a ministério voluntário?", check(disposto_ministerio_voluntario)) }}
-      {{ field_detail("34) Leu toda a Bíblia?", check(leu_toda_biblia), "Se não, quantos livros leu", livros_lidos) }}
-      {{ field_html("35) Pratica ensinos do Satélite/EBD?", check(pratica_ensinos_satelite)) }}
-      {{ field_html("36) Aplica assuntos do Satélite na igreja?", check(aplica_satelite_igreja)) }}
-      {{ field_detail("37) Concluiu o Instituto Bíblico?", check(concluiu_instituto_biblico), "Qual curso", curso_realizado) }}
-      {{ field("38) Frequência média da igreja", frequencia_media_igreja) }}
-      {{ field_html("39) Estuda à noite?", sim_nao(estuda_noite_sim, estuda_noite_nao)) }}
-      {{ field_html("40) Disposto a realizar viagem?", check(disposto_viagem)) }}
-      {{ field("41) Contribuições EBD/mês", contribuicoes_ebd_mes) }}
-    </div>
+<div class="pagina pagina-4">
+  <div class="cabecalho-verde">
+    <img class="logo" src="{{ logo_base64 }}">
+    <div class="titulo">MENSAGENS REVELADAS</div>
   </div>
-</section>
+  <div class="campo-nome-topo">NOME: <span class="valor">{{ v(nome) }}</span></div>
+
+  <div class="msg-bloco-titulo">1ª MENSAGEM - MENSAGEM RESUMIDA ALCANÇADA PELO OBREIRO - DESCREVER O TEXTO DA MENSAGEM</div>
+  <div class="msg-linha">TEXTO: <span class="valor">{{ v(msg1_texto) }}</span></div>
+  <div class="msg-linha">TEMA: <span class="valor">{{ v(msg1_tema) }}</span></div>
+  <div class="msg-descricao">{{ v(msg1_descricao) }}</div>
+
+  <div class="msg-bloco-titulo">2ª MENSAGEM - MENSAGEM RESUMIDA - DESCREVER O TEXTO DA MENSAGEM</div>
+  <div class="msg-linha">TEXTO: <span class="valor">{{ v(msg2_texto) }}</span></div>
+  <div class="msg-linha">TEMA: <span class="valor">{{ v(msg2_tema) }}</span></div>
+  <div class="msg-descricao">{{ v(msg2_descricao) }}</div>
+</div>
 
 <!-- ═══════════════════════════════════════════════════════
-     ÁREA DO PASTOR
+     PÁGINA 5 — QUESTIONÁRIO
 ═══════════════════════════════════════════════════════ -->
-<section>
-  <h2>Área do Pastor Responsável</h2>
-  <div class="section-body">
-    <div class="grid grid-2">
-      {{ field("Igreja", pastor_igreja) }}
-      {{ field("Cidade / UF", v(pastor_cidade) + " / " + v(pastor_uf)) }}
-    </div>
-    <div class="grid" style="margin-top:8px;">
-      {{ field("01) Função a ser apresentado", funcao_apresentada) }}
-      {{ field_html("03) Tem mensagem revelada? (folha anexa)", check(tem_mensagem_revelada)) }}
-      {{ field_html("04) Transmite bem a mensagem?", check(transmite_bem_mensagem)) }}
-      {{ field("02) Característica do ministério", caracteristica_ministerio, full=True) }}
-      {{ field("05) Defeito (tímido/afoito/lento/rígido etc.)", defeito) }}
-      {{ field_html("06) Tem bom testemunho?", check(tem_bom_testemunho)) }}
-      {{ field_html("07) Tem maturidade nos dons?", check(maturidade_dons)) }}
-      {{ field_html("08) Gosta de imitar movimentos?", check(gosta_imitar_movimentos)) }}
-      {{ field_html("09) É gastador?", check(e_gastador)) }}
-      {{ field_detail("10) Dado a comentários depreciativos?", check(dado_comentarios_depreciativos), "Quais", comentarios_depreciativos_quais) }}
-      {{ field_html("11) É pontual?", check(pontual)) }}
-      {{ field_html("12) É sóbrio no vestir?", check(sobrio_vestir)) }}
-      {{ field("13) Nº igrejas no bairro/cidade", numero_igrejas_bairro) }}
-      {{ field("14) Nº pastores no bairro/cidade", numero_pastores_bairro) }}
-      {{ field_detail("15) Obediente aos dons relacionados?", check(obediente_dons), "Outra(s)? Quais", obediente_dons_quais) }}
-      {{ field_detail("16) Já foi apresentado para esta função?", check(ja_apresentado_antes), "Quantas vezes / Ano", vezes_ano(quantas_vezes_apresentado, ano_apresentacao)) }}
-      {{ field("Caso não tenha sido aprovado, motivo", motivo_nao_aprovado, full=True) }}
-      {{ field("17) Igreja que o candidato assumirá", igreja_assumira, full=True) }}
-      {{ field("Observação do Pastor Responsável / Dom da Igreja", observacao_pastor, full=True) }}
-    </div>
+<div class="pagina pagina-5">
+  <div class="cabecalho-verde">
+    <img class="logo" src="{{ logo_base64 }}">
+    <div class="titulo">QUESTIONÁRIO<div>FAZER BREVE COMENTÁRIO SOBRE TEMAS ABAIXO</div></div>
   </div>
-</section>
+  <div class="campo-nome-topo">NOME: <span class="valor">{{ v(nome) }}</span></div>
 
-<!-- ══════════════════════════════════════════════════════
-     EXPERIÊNCIAS COM RECURSOS DA GRAÇA
-═══════════════════════════════════════════════════════ -->
-<section>
-  <h2>Experiências com Recursos da Graça (Meios de Graça)</h2>
-  <div class="section-body">
-    {{ field("Nome", nome) }}
-    <div class="grid" style="margin-top:7px;">
-      {{ field("Clamor pelo Sangue de Jesus / Oração", experiencia_clamor, full=True) }}
-      {{ field("Jejum", experiencia_jejum, full=True) }}
-      {{ field("Madrugada", experiencia_madrugada, full=True) }}
-      {{ field("Consulta à Palavra", experiencia_palavra, full=True) }}
-      {{ field("Louvor", experiencia_louvor, full=True) }}
-    </div>
-  </div>
-</section>
+  <div class="bloco-titulo">PALAVRA REVELADA</div>
+  <div class="bloco-texto">{{ v(palavra_revelada) }}</div>
+  <div class="bloco-titulo">CLAMOR PELO PODER DO SANGUE DE JESUS</div>
+  <div class="bloco-texto">{{ v(clamor_sangue_jesus) }}</div>
+  <div class="bloco-titulo">IGREJA CORPO DE CRISTO</div>
+  <div class="bloco-texto">{{ v(igreja_corpo_cristo) }}</div>
+  <div class="bloco-titulo">SALVAÇÃO</div>
+  <div class="bloco-texto">{{ v(salvacao) }}</div>
+  <div class="bloco-titulo">ORIGENS DA FÉ OU FÉ HISTÓRICA E PROFÉTICA</div>
+  <div class="bloco-texto">{{ v(origens_fe) }}</div>
+  <div class="bloco-titulo">SACERDÓCIO UNIVERSAL DO CRENTE</div>
+  <div class="bloco-texto">{{ v(sacerdocio_universal) }}</div>
+  <div class="bloco-titulo">OBJETIVO DAS TRANSMISSÕES VIA SATÉLITE ÀS IGREJAS</div>
+  <div class="bloco-texto">{{ v(objetivo_satelite) }}</div>
+</div>
 
 <!-- ═══════════════════════════════════════════════════════
-     EXPERIÊNCIAS DO OBREIRO
+     PÁGINA 6 — QUESTIONÁRIO PARA ESPOSAS DOS UNGIDOS
 ═══════════════════════════════════════════════════════ -->
-<section>
-  <h2>Experiências do Obreiro</h2>
-  <div class="section-body">
-    {{ field("Nome", nome) }}
-    <div class="grid" style="margin-top:7px;">
-      {{ field("Dons que se cumpriram", dons_cumpridos, full=True) }}
-      {{ field("Provas vividas", provas_vividas, full=True) }}
-      {{ field("Experiências vividas", experiencias_vividas, full=True) }}
-    </div>
+<div class="pagina pagina-6">
+  <div class="cabecalho-verde">
+    <img class="logo" src="{{ logo_base64 }}">
+    <div class="titulo">QUESTIONÁRIO PARA ESPOSAS DOS UNGIDOS<div>FAZER BREVE COMENTÁRIO SOBRE OS ITENS ABAIXO</div></div>
   </div>
-</section>
+  <div class="campo-nome-topo">NOME DO UNGIDO: <span class="valor">{{ v(nome if funcao_atual == "Ungido" else None) }}</span></div>
+  <div class="campo-nome-topo">NOME DA ESPOSA: <span class="valor">{{ v(nome_esposa if funcao_atual == "Ungido" else None) }}</span></div>
 
-<!-- ═══════════════════════════════════════════════════════
-     MENSAGENS REVELADAS
-═══════════════════════════════════════════════════════ -->
-<section>
-  <h2>Mensagens Reveladas</h2>
-  <div class="section-body">
-    {{ field("Nome", nome) }}
+  <div class="pergunta-titulo">1-Você está de acordo com a ordenação de seu esposo e o seu propósito para o ministério? Faça um breve comentário.</div>
+  <div class="bloco-texto">{{ v(q1_acordo_ordenacao) }}</div>
+  <div class="pergunta-titulo">2-Você concorda com as doutrinas e orientações do Presbitério? Faça um breve comentário.</div>
+  <div class="bloco-texto">{{ v(q2_concorda_doutinas) }}</div>
+  <div class="pergunta-titulo">3-Você concorda com o ministério voluntário? Faça um breve comentário.</div>
+  <div class="bloco-texto">{{ v(q3_ministerio_voluntario) }}</div>
+  <div class="pergunta-titulo">4-Você entende que não deve interferir no ministério do seu esposo? Faça um breve comentário.</div>
+  <div class="bloco-texto">{{ v(q4_nao_interferir) }}</div>
+  <div class="pergunta-titulo">5-Faça outros comentários, se achar necessário.</div>
+  <div class="bloco-texto">{{ v(q5_outros) }}</div>
 
-    <div class="sub-section">1ª Mensagem</div>
-    <div class="grid grid-2">
-      {{ field("Texto (referência bíblica)", msg1_texto) }}
-      {{ field("Tema", msg1_tema) }}
-    </div>
-    <div class="field full" style="margin-top:6px;">
-      <div class="k">Descreva aqui a mensagem revelada</div>
-      <div class="textarea-v">{{ v(msg1_descricao) }}</div>
-    </div>
-
-    <div class="sub-section">2ª Mensagem</div>
-    <div class="grid grid-2">
-      {{ field("Texto (referência bíblica)", msg2_texto) }}
-      {{ field("Tema", msg2_tema) }}
-    </div>
-    <div class="field full" style="margin-top:6px;">
-      <div class="k">Descreva aqui a mensagem revelada</div>
-      <div class="textarea-v">{{ v(msg2_descricao) }}</div>
-    </div>
-  </div>
-</section>
-
-<!-- ═══════════════════════════════════════════════════════
-     QUESTIONÁRIO
-═══════════════════════════════════════════════════════ -->
-<section>
-  <h2>Questionário — Comentário Sobre os Temas Abaixo</h2>
-  <div class="section-body">
-    {{ field("Nome", nome) }}
-    <div class="grid" style="margin-top:7px;">
-      {{ field("Palavra Revelada", palavra_revelada, full=True) }}
-      {{ field("Clamor pelo Poder do Sangue de Jesus", clamor_sangue_jesus, full=True) }}
-      {{ field("Igreja Corpo de Cristo", igreja_corpo_cristo, full=True) }}
-      {{ field("Salvação", salvacao, full=True) }}
-      {{ field("Origens da Fé / Fé Histórica e Profética", origens_fe, full=True) }}
-      {{ field("Sacerdócio Universal do Crente", sacerdocio_universal, full=True) }}
-      {{ field("Objetivo das Transmissões via Satélite", objetivo_satelite, full=True) }}
-    </div>
-  </div>
-</section>
-
-<!-- ═══════════════════════════════════════════════════════
-     QUESTIONÁRIO PARA ESPOSAS
-═══════════════════════════════════════════════════════ -->
-<section>
-  <h2>Questionário para Esposas dos Ungidos</h2>
-  <div class="section-body">
-    {%- set esposa_preenchido = q1_acordo_ordenacao or q2_concorda_doutinas or q3_ministerio_voluntario or q4_nao_interferir or q5_outros or assinatura_esposa %}
-    <div class="grid grid-2">
-      {{ field("Nome do Ungido", nome if esposa_preenchido else None) }}
-      {# Só mostra o nome da esposa aqui quando a Função Atual (item 01,
-         em Vida Espiritual) for "Ungido" — nas demais funções o campo
-         fica em branco, mesmo que o nome já esteja preenchido lá. #}
-      {{ field("Nome da Esposa", nome_esposa if funcao_atual == "Ungido" else None) }}
-    </div>
-    <div class="grid" style="margin-top:7px;">
-      {{ field("1) De acordo com a ordenação e o propósito do esposo?", q1_acordo_ordenacao, full=True) }}
-      {{ field("2) Concorda com as doutrinas e orientações do Presbitério?", q2_concorda_doutinas, full=True) }}
-      {{ field("3) Concorda com o ministério voluntário?", q3_ministerio_voluntario, full=True) }}
-      {{ field("4) Entende que não deve interferir no ministério do esposo?", q4_nao_interferir, full=True) }}
-      {{ field("5) Outros comentários", q5_outros, full=True) }}
-    </div>
-    {{ field("Assinatura da Esposa", assinatura_esposa, full=True) }}
-  </div>
-</section>
-
-<!-- ═══════════════════════════════════════════════════════
-     SITUAÇÃO FINAL (preenchimento da liderança)
-═══════════════════════════════════════════════════════ -->
-<section>
-  <h2>Situação Final</h2>
-  <div class="section-body">
-    <div class="admin-note">Preenchimento exclusivo do pastor responsável / presbitério, após a avaliação da ficha.</div>
-    <div class="situacao-box">
-      <div class="label">Situação</div>
-      <div class="value">{{ v(situacao) }}</div>
-    </div>
-    <div class="grid" style="margin-top:10px;">
-      {{ field("Dom na Comissão da Área/Pólo", dom_comissao_area, full=True) }}
-      {{ field("Dom na Comissão da Região", dom_comissao_regiao, full=True) }}
-    </div>
-  </div>
-</section>
-
-<div class="signature">
-  <div><b>{{ v(nome) }}</b>Assinatura do Obreiro</div>
-  <div><b>{{ v(assinatura_pastor) }}</b>Assinatura do Pastor Responsável</div>
+  <div class="assinatura-esposa">Assinatura da esposa: <span class="linha">{{ v(assinatura_esposa) if assinatura_esposa else '' }}</span></div>
 </div>
 
 </body>

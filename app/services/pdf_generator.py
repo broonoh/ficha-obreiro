@@ -1,36 +1,50 @@
 # app/services/pdf_generator.py
+import base64
 import os
 import re
-from datetime import datetime
 from pathlib import Path
 from jinja2 import Template
 
 TEMPLATE_PATH = Path(__file__).parent.parent / "templates" / "ficha.html"
+LOGO_PATH = Path(__file__).parent.parent.parent / "assets" / "logo_icm.png"
+
+_logo_base64_cache = None
+
+
+def _logo_base64() -> str:
+    """Logo da ICM embutido como data URI — igual à foto do usuário, pra
+    não depender de resolver caminho de arquivo relativo (WeasyPrint no
+    desktop e WebView no Android resolvem isso de formas diferentes)."""
+    global _logo_base64_cache
+    if _logo_base64_cache is None:
+        dados = LOGO_PATH.read_bytes()
+        _logo_base64_cache = "data:image/png;base64," + base64.b64encode(dados).decode()
+    return _logo_base64_cache
 
 
 def _check(v):
     """Retorna chip visual para booleanos no PDF."""
     if v is None or v == "" or v == "None":
-        return '<span class="check check-empty">—</span>'
+        return ""
     if isinstance(v, bool):
         if v:
             return '<span class="check check-yes">✓ Sim</span>'
-        return '<span class="check check-no">✗ Não</span>'
+        return '<span class="check check-no">✓ Não</span>'
     # String "True"/"False"
     if str(v).lower() in ("true", "sim", "yes"):
         return '<span class="check check-yes">✓ Sim</span>'
     if str(v).lower() in ("false", "não", "nao", "no"):
-        return '<span class="check check-no">✗ Não</span>'
+        return '<span class="check check-no">✓ Não</span>'
     return str(v)
 
 
 def _v(value):
-    """Normaliza valor vazio/None/indefinido para um travessão — evita
-    campos em branco no PDF (ex.: campos administrativos sem tela própria,
-    como "Situação Final", que nunca chegam no dicionário de dados)."""
+    """Normaliza valor vazio/None/indefinido para string vazia (campo em
+    branco no PDF, sem travessão) — inclui campos administrativos sem tela
+    própria (ex.: "Situação Final"), que nunca chegam no dicionário de dados."""
     from jinja2 import Undefined
     if isinstance(value, Undefined) or value is None or value == "" or value == "None":
-        return "—"
+        return ""
     return value
 
 
@@ -39,16 +53,15 @@ def _sim_nao(sim, nao):
     if sim:
         return '<span class="check check-yes">✓ Sim</span>'
     if nao:
-        return '<span class="check check-no">✗ Não</span>'
-    return '<span class="check check-empty">—</span>'
+        return '<span class="check check-no">✓ Não</span>'
+    return ""
 
 
 def gerar_pdf(dados: dict) -> str:
     with open(TEMPLATE_PATH, encoding="utf-8") as f:
         tpl = Template(f.read())
 
-    dados.setdefault("gerado_em", datetime.now().strftime("%d/%m/%Y %H:%M"))
-    html = tpl.render(check=_check, v=_v, sim_nao=_sim_nao, **dados)
+    html = tpl.render(check=_check, v=_v, sim_nao=_sim_nao, logo_base64=_logo_base64(), **dados)
 
     # O WeasyPrint trata espaços em branco entre tags (indentação/quebras de
     # linha do template) como itens "fantasmas" dentro de containers flex,

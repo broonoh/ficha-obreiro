@@ -186,6 +186,7 @@ class VidaEspiritualContent(MDBoxLayout):
             ("SONHO", "dons_sonho"),
             ("VISÃO", "dons_visao"),
             ("REVELAÇÃO", "dons_revelacao"),
+            ("NÃO", "dons_nenhum"),
         ]:
             col = MDBoxLayout(orientation="vertical", size_hint_x=1)
             cb = MDCheckbox(active=False)
